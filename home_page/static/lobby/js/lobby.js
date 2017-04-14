@@ -56,7 +56,10 @@ function send_message() {
 }
 
 // Draggable.create("#box", {type:"x,y", edgeResistance:0.65, bounds:"#square", throwProps:true});
-
+function printSomething() {
+  console.log("clicked!");
+}
+Draggable.create("#box");
 // Draggable.create("#box", {bounds:"#square"});
 
 // var box = document.getElementById("box"); //or use jQuery's $("#photo")

@@ -1,9 +1,16 @@
 from channels import Group
 import json
 
+# user
+from channels.auth import channel_session_user, channel_session_user_from_http
+
+
+@channel_session_user_from_http
 def ws_connect(message):
   message.reply_channel.send({"accept": True})
   Group("chat").add(message.reply_channel)
+
+  # print(message.user.username)
 
 
 # def ws_message(message):
@@ -12,29 +19,30 @@ def ws_connect(message):
     # "text": message.content['text'],
   # })
 
+@channel_session_user
 def ws_message(message):
 # def ws_message(message, instance, **kwargs):
   # print(message.Objects.all())
 
 
-
+  # print(message.user.username)
   # converts json to dict
-  print(json.loads(message.content['text']))
+  # print(json.loads(message.content['text']))
   my_dict = json.loads(message.content['text'])
-  print("My user is called %s" % my_dict['username'])
+  # print("My user is called %s" % my_dict['username'])
 
   myobject = {
-    "username": my_dict['username'],
+    "username": message.user.username,
     "message": my_dict['message']
   }
 
   #converts dict to json string
-  print(json.dumps(myobject))
+  # print(json.dumps(myobject))
 
-  print(message.content['text'])
-  print(message.content)
+  # print(message.content['text'])
+  # print(message.content)
   # print(message.user)
-  print(myobject)
+  # print(myobject)
 
   # print(myobject)
   # print(JSONEncoder().encode(myobject))
@@ -62,6 +70,6 @@ def ws_message(message):
 
   })
 
-
+# @channel_session_user
 def ws_disconnect(message):
   Group("chat").discard(message.reply_channel)

@@ -1,0 +1,54 @@
+#front-zone {
+  margin: auto;
+  width: 70%;
+  height: 100px;
+  background-color: lightpink;
+  border: 2px solid black;
+  position: fixed;
+  bottom: 20%;
+}
+
+#hand {
+  /*margin: auto;*/
+/*  width: 50%;
+  height: 100px;
+  bottom: 20%;*/
+
+  bottom: 2%;
+  height: auto;
+  /*margin: 0 auto;*/
+  /*background-color: black;*/
+  position: fixed;
+  width: 100%;
+  text-align: center;
+}
+
+#card-center {
+  vertical-align: bottom;
+  margin: 0 auto;
+}
+
+.card {
+  /*display: block;*/
+  /*width: 100px;*/
+  /*height: 120px;*/
+  /*width: auto;*/
+  /*height: auto;*/
+  /*background-color: lightblue;*/
+  /*border: 2px solid black;*/
+  /*float: left;*/
+  /*margin-right: 1em;*/
+}
+
+img {
+  /*width: auto;*/
+  /*height: auto;*/
+  width: 7%;
+  height: 7%;
+}
+
+/*#bottomRight {
+  background-color: green;
+  position: fixed;
+  bottom: 0;
+}*/

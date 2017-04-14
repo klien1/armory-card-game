@@ -16,35 +16,39 @@
   </div>
 
 
+  <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <!-- <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> -->
 
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
-            </div>
+                <!-- <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i> -->
+            <!-- </button> -->
+            <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
+        </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> -->
+        <div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="page-scroll" href="#">Lobby</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a class="page-scroll" href="{% url "home_page:logout" %}">Sign Out</a>
+                    </li>
+                {% else %}                       
                     <li>
                         <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
                     </li>
-                    <li>
-                        <a class="page-scroll" href="{% url "home_page:lobby" %}">Services</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+                {% endif %}
+            </ul>
         </div>
-        <!-- /.container-fluid -->
-    </nav>
+        <!-- /.navbar-collapse -->
+    <!-- </div> -->
+    <!-- /.container-fluid -->
+  </nav>
 
 
 
@@ -58,9 +62,9 @@
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
       <div class="btn-group">
-        <button class="btn btn-info">Create Game</button>
-        <button class="btn btn-info">Join Game</button>
-        <button class="btn btn-info">Invite Player</button>
+        <a href="{% url "home_page:game" %}" class="btn btn-info">Create Game</a>
+        <!-- <button class="btn btn-info">Join Game</button> -->
+        <!-- <button class="btn btn-info">Invite Player</button> -->
       </div>
       </div>
       <div id="chat-component pull-right" class="col-md-6"> 
@@ -74,21 +78,14 @@
   </div>
 
 <div class=container>
-  <div id="square">
-    <div id="box" draggable="true"></div>
-  </div>
+  <!-- <div id="square"> -->
+    <div id="box"></div>
+  <!-- </div> -->
 </div>
 {% endblock body %}
 
 {% block scripts %}
-
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/utils/Draggable.min.js"></script>
-
+  <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script>
+  <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script>
   <script src="{% static "lobby/js/lobby.js" %}" type="text/javascript" charset="utf-8"></script>
-
-    <!-- remove -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenLite.min.js"></script> -->
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/plugins/CSSPlugin.min.js"></script> -->
 {% endblock scripts %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    GAME
+{% endblock title %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static "game/css/game.css" %}">
+{% endblock head %}
+
+{% block body %}
+<br><br>
+<!--   <div class="container">
+      <h1>Welcome to the GAME</h1>
+  </div> -->
+
+
+
+<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#">Services</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+
+
+
+
+
+
+
+
+<!--   <div class="container">
+    <div class="row">    
+      <div id="lobby-component" class="col-md-6">
+      <div class="btn-group">
+        <button class="btn btn-info">Create Game</button>
+        <button class="btn btn-info">Join Game</button>
+        <button class="btn btn-info">Invite Player</button>
+      </div>
+      </div>
+      <div id="chat-component pull-right" class="col-md-6"> 
+        <h2>Chatroom</h2>   
+        <div id="chatbox"></div>
+        <div id="end-chat"></div>
+        <input id="message" type="text" placeholder="enter message" style="width: 375px">
+        <button type="submit" onclick="send_message()" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div> -->
+<div class="container">    
+  <div id="front-zone"></div>
+</div>
+
+<div class=container id="hand">
+  <img class="card" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+  <img class="card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
+  <img class="card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
+  <img class="card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
+  <img class="card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
+</div>
+
+<!-- <div id="bottomRight">
+  <img class="card" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+</div> -->
+<!-- <div class=container id="hand"> -->
+  <!-- <div id="card-center">     -->
+    <!-- <div class="card"><img src="{% static "cards/Archer/Archer.jpg"%}" alt="c1"></div> -->
+    <!-- <div class="card"><img src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1"></div> -->
+    <!-- <div class="card"><img src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1"></div> -->
+    <!-- <div class="card"><img src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1"></div> -->
+    <!-- <div class="card"><img src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1"></div> -->
+<!--   </div>
+</div> -->
+{% endblock body %}
+
+{% block scripts %}
+  <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script>
+  <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script>
+  <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+  // console.log({%static "cards/Archer/"%});
+  $('img').on("mouseenter", (test) => {
+      // console.log(test.target.src);
+      let localpath = test.target.src;
+      // console.log(localpath);
+      let index = localpath.search("/static/");
+      // console.log(localpath.substr(index));
+      let path = localpath.substr(index);
+      // let path = test.target.src;
+      let image = document.createElement('IMG');
+      image.src = path;
+      image.id = "supersize";
+      image.style="width: 20%; height: 20%; float:right; margin-top:2em;";
+      $("body").append(image);
+  });
+
+  $('img').on("mouseleave", () => {
+      $('#supersize').remove();
+  });
+  </script>
+{% endblock scripts %}

@@ -172,6 +172,7 @@ header {
   background-position: center;
   /*http://wallpapercave.com/medieval-wallpaper SOURCE*/
   background-image: url('../img/knight-bg.jpg');
+  /*background-size: cover;*/
   text-align: center;
   color: white;
 }
