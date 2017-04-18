@@ -4,11 +4,33 @@ import json
 # user
 from channels.auth import channel_session_user, channel_session_user_from_http
 
+logged_in_users = []
+# num_users_online = 0;
 
 @channel_session_user_from_http
 def ws_connect(message):
   message.reply_channel.send({"accept": True})
   Group("chat").add(message.reply_channel)
+  logged_in_users.append(message.user.username)
+  # num_users_online += 1
+  Group("chat").send({
+      "text": json.dumps({
+          "user_logging": logged_in_users,
+          # "num_users_online": num_users_online,
+        })
+    })
+  # Group("login").add(message.reply_channel)
+  # Group("chat").send({
+      # "text": json.dumps({
+        # "login": {
+          # "user_just_logged_in": message.user.username,
+        # }
+  #       "login": message.user.username,
+  #       "user_online": True,
+  #       "username": None,
+  #       "message": None,
+    #   }),
+    # })
 
   # print(message.user.username)
 
@@ -31,11 +53,12 @@ def ws_message(message):
   my_dict = json.loads(message.content['text'])
   # print("My user is called %s" % my_dict['username'])
 
-  myobject = {
-    "username": message.user.username,
-    "message": my_dict['message']
-  }
-
+  # myobject = {
+    # "username": message.user.username,
+    # "message": my_dict['message'],
+    # "login": None,
+    # "user_online": None,
+  # }
   #converts dict to json string
   # print(json.dumps(myobject))
 
@@ -65,11 +88,48 @@ def ws_message(message):
     # "text": message.content['text'],
     # "text": "{ \"username\": \"user2\", \"message\": \"my message\"}"
     # "text": json.dumps(message.content['text'])
-    "text": json.dumps(myobject)
+    "text": json.dumps({
+        "chat": {
+          "username": message.user.username,
+          "message": my_dict['message'],
+        }
+      })
 
 
   })
 
-# @channel_session_user
+@channel_session_user
 def ws_disconnect(message):
+  logged_in_users.remove(message.user.username)
+  # num_users_online -= 1
+  Group("chat").send({
+    "text": json.dumps({
+        "user_logging": logged_in_users,
+        # "num_users_online": num_users_online,
+      })
+  })
+
+  # Group("chat").send({
+    # "text": json.dumps({
+      # "logout": {
+        # "user_just_logged_out": message.user.username
+      # },
+  #     "user_online": False,
+  #     "username": None,
+  #     "message": None,
+    # }),
+  # })
   Group("chat").discard(message.reply_channel)
+  # Group("login").discard(message.reply_channel)
+
+
+
+# @channel_session_user_from_http
+# def ws_connect_login(message):
+#   message.reply_channel.send({"accept": True})
+#   Group("login").add(message.reply_channel)
+
+
+# @channel_session_user
+# def ws_disconnect_login(message):
+#   Group("login").discard(message.reply_channel)

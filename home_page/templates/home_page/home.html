@@ -28,7 +28,7 @@
             <div>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="page-scroll" href="#">How to Play</a>
+                        <a class="page-scroll" href="{% url "home_page:how-to-play" %}">How to Play</a>
                     </li>
                     <li>
                         <a class="page-scroll" href="{% url "home_page:lobby" %}">Lobby</a>
@@ -58,7 +58,7 @@
                 <h1 id="homeHeading">Armory</h1>
                 <hr>
                 <p>Cooperative Card Game</p>
-                <a href="#" class="btn btn-primary btn-xl page-scroll">Learn How To Play</a>
+                <a href="{% url "home_page:how-to-play" %}" class="btn btn-primary btn-xl page-scroll">Learn How To Play</a>
             </div>
         </div>
     </header>

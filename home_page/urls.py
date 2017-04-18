@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^logout/', views.log_out, name='logout'),
     url(r'^lobby/', views.lobby, name='lobby'),
     url(r'^game/', views.game, name='game'),
+    url(r'^how-to-play/', views.how_to_play, name='how-to-play'),
 ]

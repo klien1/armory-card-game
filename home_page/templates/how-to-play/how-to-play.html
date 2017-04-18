@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {{ title }}
+{% endblock title %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "how-to-play/css/how-to-play.css" %}">
+{% endblock head %}
+
+{% block body %}
+<!--   <div class="container">
+    <h1>How to play</h1>
+  </div> -->
+    <img src="{% static "cards/Rules.jpg" %}" alt="guide">
+{% endblock body %}
+
+{% block scripts %}
+    
+{% endblock scripts %}

@@ -14,20 +14,64 @@ socket.onmessage = (msg) => {
   // console.log(msg.data.message);
   console.log(JSON.parse(msg.data));
   recv = JSON.parse(msg.data);
+  // console.log(recv)
   // console.log(JSON.parse(recv.message));
   // recvInner = JSON.parse(recv.message);
-  let chat = document.getElementById('chatbox');
-  let para = document.createElement('P');
-  let text = document.createTextNode(recv.username + ": "  + recv.message);
-  // let text = document.createTextNode(recvInner.username + ": "  + recvInner.message);
+  if (recv.chat !== undefined) {
+    // console.log('in user and message')
 
-  // add the child nodes to chatbox
-  para.appendChild(text); 
-  chat.appendChild(para);
+    // chat = JSON.parse(recv.chat);
+    // console.log(chat);
 
-  // scroll to bottom of chatbox when new msg appears
-  let chatboxscroll = $('#chatbox');
-  chatboxscroll.animate({ scrollTop: chatboxscroll.prop('scrollHeight')}, 1000);
+    $("#chatbox").append("<p>" + recv.chat.username + ": "  + recv.chat.message + "</p>")
+
+    // let chat = document.getElementById('chatbox');
+    // let para = document.createElement('P');
+    // let text = document.createTextNode(recv.chat.username + ": "  + recv.chat.message);
+    // let text = document.createTextNode(recvInner.username + ": "  + recvInner.message);
+
+    // add the child nodes to chatbox
+    // para.appendChild(text); 
+    // chat.appendChild(para);
+
+    // scroll to bottom of chatbox when new msg appears
+    let chatboxscroll = $('#chatbox');
+    chatboxscroll.animate({ scrollTop: chatboxscroll.prop('scrollHeight')}, 1000);
+  }
+  else if (recv.user_logging !== undefined) {
+    $("#user_list").empty();
+    recv.user_logging.forEach((users) => {
+      // console.log(users)
+      $("#user_list").append("<li>" + users + "</li>");
+    });
+    // $("#num_users_online").text("Number of Users Online: " + recv.num_users_online);
+    // console.log(recv.user_logging);
+  }
+  // else if (recv.login !== undefined) {
+  //   $("#user_list").append("<li>" + recv.login.user_just_logged_in + "</li>");
+  //   console.log('logged in');
+  // }
+  // else if (recv.logout !== undefined) {
+  //   console.log('logged out');
+  // }
+
+  // if (recv.login !== null && recv.user_online === true) {
+  //   console.log('logged in')
+  //   let user_list = document.getElementById('user_list');
+  //   let li = document.createElement('LI');
+  //   let text = document.createTextNode(recv.login);
+  //   // let text = document.createTextNode(recvInner.username + ": "  + recvInner.message);
+
+  //   // add the child nodes to chatbox
+  //   li.appendChild(text); 
+  //   user_list.appendChild(li);
+  // }
+  // else if (recv.login !== null && recv.user_online === false) {
+  //   let user_list = document.getElementById('user_list');
+  //   user_list.children.forEach((item) => {
+  //     console.log(item)
+  //   })
+  // }
 }
 
 // socket is open
@@ -43,7 +87,7 @@ if (socket.readyState == WebSocket.OPEN) {
 function send_message() {
   let message = document.getElementById('message');
   data = {
-    "username": "user1",
+    // "username": "user1",
     "message": message.value,
   }
   // socket.send(message.value);
@@ -53,6 +97,7 @@ function send_message() {
   // socket.send(message.value);
   // clear message
   message.value = "";
+  console.log("message sent", data)
 }
 
 // Draggable.create("#box", {type:"x,y", edgeResistance:0.65, bounds:"#square", throwProps:true});

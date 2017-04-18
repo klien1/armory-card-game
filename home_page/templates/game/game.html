@@ -123,4 +123,14 @@
       $('#supersize').remove();
   });
   </script>
+
+  <script>
+    let socket = new WebSocket("ws://localhost:8000/game/");
+    socket.onopen = () => {
+      console.log('CONNECTED');
+    }
+    if (socket.readyState == WebSocket.OPEN) {
+      socket.onopen();
+    }
+  </script>
 {% endblock scripts %}
