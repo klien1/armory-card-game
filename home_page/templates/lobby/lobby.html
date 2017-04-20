@@ -61,37 +61,31 @@
   <div class="container">
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
-      <div class="btn-group">
-        <a href="{% url "home_page:game" %}" class="btn btn-info">Create Game</a>
-        <!-- <button class="btn btn-info">Join Game</button> -->
-        <!-- <button class="btn btn-info">Invite Player</button> -->
-      </div>
-      <div>
-      <h2>Users online</h2>
-      <ul id="user_list">
-<!--         {% for user in users_online %}
-          <li>{{ user }}</li>
-        {% endfor %} -->
-      </ul>
-      <h2 id="num_users_online"></h2>
-      <!-- Number of users online: {{ num_users_online }}</h2> -->
-      </div>
+        <div class="btn-group">
+          <a href="{% url "home_page:game" %}" class="btn btn-info">Create Game</a>
+          <!-- <button class="btn btn-info">Join Game</button> -->
+          <!-- <a class="btn btn-info" style="border: 1px solid black">Invite Player</a> -->
+        </div>
+        <div>
+        <h2>Users in Lobby</h2>
+        <ul id="user_list" class="list-group"></ul>
+        </div>
       </div>
       <div id="chat-component pull-right" class="col-md-6"> 
         <h2>Chatroom</h2>   
         <div id="chatbox"></div>
         <div id="end-chat"></div>
-        <input id="message" type="text" placeholder="enter message" style="width: 375px">
+        <input id="message" type="text" placeholder="enter message">
         <button type="submit" onclick="send_message()" class="btn btn-primary">Send message</button>
       </div>
     </div>
   </div>
 
-<div class=container>
+<!-- <div class=container> -->
   <!-- <div id="square"> -->
-    <div id="box"></div>
+    <!-- <div id="box"></div> -->
   <!-- </div> -->
-</div>
+<!-- </div> -->
 {% endblock body %}
 
 {% block scripts %}

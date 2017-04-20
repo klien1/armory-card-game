@@ -10,15 +10,16 @@ logged_in_users = []
 @channel_session_user_from_http
 def ws_connect(message):
   message.reply_channel.send({"accept": True})
-  Group("chat").add(message.reply_channel)
+  Group("lobby").add(message.reply_channel)
+  Group("%s" % message.user.username).add(message.reply_channel)
   logged_in_users.append(message.user.username)
   # num_users_online += 1
-  Group("chat").send({
-      "text": json.dumps({
-          "user_logging": logged_in_users,
-          # "num_users_online": num_users_online,
-        })
-    })
+  Group("lobby").send({
+    "text": json.dumps({
+        "user_logging": logged_in_users,
+        # "num_users_online": num_users_online,
+      })
+  })
   # Group("login").add(message.reply_channel)
   # Group("chat").send({
       # "text": json.dumps({
@@ -73,7 +74,15 @@ def ws_message(message):
   # print("DUMPING@@@")
   # print(json.dumps({"msg": myobject}))
 
-  Group("chat").send({
+  if my_dict.get("to") is not None:
+    Group(my_dict["to"]).send({
+      "text": json.dumps({
+        "to": my_dict["to"],
+        "from": message.user.username,
+      })
+    })
+
+  Group("lobby").send({
     # "text": json.dumps({
     #   "username": message,
     #   "message": message.content,
@@ -89,24 +98,24 @@ def ws_message(message):
     # "text": "{ \"username\": \"user2\", \"message\": \"my message\"}"
     # "text": json.dumps(message.content['text'])
     "text": json.dumps({
-        "chat": {
-          "username": message.user.username,
-          "message": my_dict['message'],
-        }
-      })
-
-
+      "chat": {
+        "username": message.user.username,
+        "message": my_dict['message'],
+      }
+    })
   })
 
 @channel_session_user
+# @channel_session_user_from_http
 def ws_disconnect(message):
   logged_in_users.remove(message.user.username)
+  print(logged_in_users)
   # num_users_online -= 1
-  Group("chat").send({
+  Group("lobby").send({
     "text": json.dumps({
-        "user_logging": logged_in_users,
-        # "num_users_online": num_users_online,
-      })
+      "user_logging": logged_in_users,
+      # "num_users_online": num_users_online,
+    })
   })
 
   # Group("chat").send({
@@ -119,7 +128,8 @@ def ws_disconnect(message):
   #     "message": None,
     # }),
   # })
-  Group("chat").discard(message.reply_channel)
+  Group("lobby").discard(message.reply_channel)
+  Group("%s" % message.user.username).discard(message.reply_channel)
   # Group("login").discard(message.reply_channel)
 
 
@@ -133,3 +143,22 @@ def ws_disconnect(message):
 # @channel_session_user
 # def ws_disconnect_login(message):
 #   Group("login").discard(message.reply_channel)
+
+#"key:value, key:value, key:value, key:value"
+#{key : value,
+# }
+
+
+
+
+@channel_session_user_from_http
+def ws_connect_game(message):
+  message.reply_channel.send({"accept": True})
+  Group("game").add(message.reply_channel)
+
+
+@channel_session_user
+# @channel_session_user_from_http
+def ws_disconnect_game(message):
+  # message.reply_channel.send({"accept": True})
+  Group("game").discard(message.reply_channel)

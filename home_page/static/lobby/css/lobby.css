@@ -33,3 +33,7 @@
   border-radius:10px;
   border: 2px solid black;
 }
+
+#message {
+  width: 375px;
+}

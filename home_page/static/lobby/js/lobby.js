@@ -1,3 +1,5 @@
+let inviteCount = 0;
+
 document.getElementById("message").addEventListener("keydown", (event) => {
   // Enter is pressed
   if (event.keyCode == 13) { 
@@ -12,12 +14,16 @@ let socket = new WebSocket("ws://localhost:8000/chat/");
 socket.onmessage = (msg) => {
   // console.log(msg.data);
   // console.log(msg.data.message);
-  console.log(JSON.parse(msg.data));
+  // console.log(JSON.parse(msg.data));
   recv = JSON.parse(msg.data);
+
+  if (recv.to !== undefined) {
+    alert("hi! " + recv.to + " from " + recv.from);
+  }
   // console.log(recv)
   // console.log(JSON.parse(recv.message));
   // recvInner = JSON.parse(recv.message);
-  if (recv.chat !== undefined) {
+  if (recv.chat !== undefined && recv.chat.message.length !== 0) {
     // console.log('in user and message')
 
     // chat = JSON.parse(recv.chat);
@@ -35,14 +41,20 @@ socket.onmessage = (msg) => {
     // chat.appendChild(para);
 
     // scroll to bottom of chatbox when new msg appears
-    let chatboxscroll = $('#chatbox');
-    chatboxscroll.animate({ scrollTop: chatboxscroll.prop('scrollHeight')}, 1000);
+    // let chatboxscroll = $("#chatbox");
+    // chatboxscroll.animate({ scrollTop: chatboxscroll.prop("scrollHeight")}, 1000);
+    $("#chatbox").animate({ 
+      scrollTop: $("#chatbox").prop("scrollHeight")
+    }, 1000);
   }
   else if (recv.user_logging !== undefined) {
-    $("#user_list").empty();
+    $("#user_list").empty(); // clear user list
     recv.user_logging.forEach((users) => {
       // console.log(users)
-      $("#user_list").append("<li>" + users + "</li>");
+      $("#user_list").append("<li class='list-group-item'>" 
+        + users 
+        + "<a class='badge badge-default badge-pill' onclick='print(\"" + users + "\", this)'>Invite</a>"
+        + "</li>");
     });
     // $("#num_users_online").text("Number of Users Online: " + recv.num_users_online);
     // console.log(recv.user_logging);
@@ -86,24 +98,27 @@ if (socket.readyState == WebSocket.OPEN) {
 // send message to server
 function send_message() {
   let message = document.getElementById('message');
-  data = {
-    // "username": "user1",
-    "message": message.value,
-  }
-  // socket.send(message.value);
-  // console.log(JSON.stringify(data));
-  socket.send(JSON.stringify(data));
+  if (message.value != "") {   
+    data = {
+      // "username": "user1",
+      "message": message.value,
+      // "to": "bob",
+    }
+    // socket.send(message.value);
+    // console.log(JSON.stringify(data));
+    socket.send(JSON.stringify(data));
 
-  // socket.send(message.value);
-  // clear message
-  message.value = "";
-  console.log("message sent", data)
+    // socket.send(message.value);
+    // clear message
+    message.value = "";
+    // console.log("message sent", data)
+  }
 }
 
 // Draggable.create("#box", {type:"x,y", edgeResistance:0.65, bounds:"#square", throwProps:true});
-function printSomething() {
-  console.log("clicked!");
-}
+// function printSomething() {
+//   console.log("clicked!");
+// }
 Draggable.create("#box");
 // Draggable.create("#box", {bounds:"#square"});
 
@@ -133,3 +148,19 @@ Draggable.create("#box");
 //   div.style.top = e.clientY + 'px';
 //   div.style.left = e.clientX + 'px';
 // }​
+
+function print(msg, inviteMsg) {
+  if (inviteMsg.innerHTML === "Inviting...") {
+    console.log("Canceled invite to " + msg);
+    inviteMsg.innerHTML = "Invite";
+    inviteCount--;
+  }
+  else if (inviteCount < 1) {
+    console.log("Inviting " + msg + " to a game.");
+    inviteMsg.innerHTML = "Inviting...";
+    inviteCount++;
+  }
+  else {
+    console.log("Already invited someone")
+  }
+}
