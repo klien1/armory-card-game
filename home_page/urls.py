@@ -8,6 +8,9 @@ urlpatterns = [
     url(r'^login/', views.log_in, name='login'),
     url(r'^logout/', views.log_out, name='logout'),
     url(r'^lobby/', views.lobby, name='lobby'),
-    url(r'^game/', views.game, name='game'),
+    # url(r'^game/', views.game, name='game'),
+    url(r'^game-(?P<room_id>[0-9]+)/', views.game, name='game'),
     url(r'^how-to-play/', views.how_to_play, name='how-to-play'),
+    url(r'^create_game/', views.create_game, name='create_game'),
+    # url(r'^(?P<class_type>Archer)/', views.how_to_play, name='classes'),
 ]

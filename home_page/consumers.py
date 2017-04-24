@@ -14,9 +14,17 @@ def ws_connect(message):
   Group("%s" % message.user.username).add(message.reply_channel)
   logged_in_users.append(message.user.username)
   # num_users_online += 1
+
+  # users_online = get_user_model().objects.select_related('user_online')
+  # for user in users_online:
+  #   if hasattr(user, 'user_online'):
+  #     logged_in_users.append(user)
+
+
   Group("lobby").send({
     "text": json.dumps({
         "user_logging": logged_in_users,
+        "current_user": message.user.username,
         # "num_users_online": num_users_online,
       })
   })
@@ -73,12 +81,14 @@ def ws_message(message):
 
   # print("DUMPING@@@")
   # print(json.dumps({"msg": myobject}))
-
+  print(my_dict)
   if my_dict.get("to") is not None:
     Group(my_dict["to"]).send({
       "text": json.dumps({
-        "to": my_dict["to"],
-        "from": message.user.username,
+        "invite": {
+          "to": my_dict["to"],
+          "from": message.user.username,
+        }
       })
     })
 

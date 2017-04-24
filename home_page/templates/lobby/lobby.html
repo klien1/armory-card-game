@@ -12,7 +12,7 @@
 {% block body %}
 <br><br><br><br>
   <div class="container">
-      <h1>Welcome to the Lobby</h1>
+      <h1>Welcome {{current_user}}</h1>
   </div>
 
 
@@ -50,19 +50,17 @@
     <!-- /.container-fluid -->
   </nav>
 
-
-
-
-
-
-
-
+<!-- <h1>numbers:</h1> -->
+<!-- {% for number in numbers %} -->
+  <!-- <h1>{{number}}</h1> -->
+<!-- {% endfor %} -->
+<!-- {{room_id}} -->
 
   <div class="container">
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
         <div class="btn-group">
-          <a href="{% url "home_page:game" %}" class="btn btn-info">Create Game</a>
+          <a href="{% url "home_page:game" room_id %}" class="btn btn-info">Create Game</a>
           <!-- <button class="btn btn-info">Join Game</button> -->
           <!-- <a class="btn btn-info" style="border: 1px solid black">Invite Player</a> -->
         </div>

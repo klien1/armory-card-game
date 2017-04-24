@@ -16,44 +16,6 @@
   </div> -->
 
 
-
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#">Services</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-
-
-
-
-
-
-
-
-
 <!--   <div class="container">
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
@@ -104,9 +66,9 @@
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
   // console.log({%static "cards/Archer/"%});
-  $('img').on("mouseenter", (test) => {
+  $('img').on('mouseenter', (currentImg) => {
       // console.log(test.target.src);
-      let localpath = test.target.src;
+      let localpath = currentImg.target.src;
       // console.log(localpath);
       let index = localpath.search("/static/");
       // console.log(localpath.substr(index));
@@ -119,7 +81,7 @@
       $("body").append(image);
   });
 
-  $('img').on("mouseleave", () => {
+  $('img').on('mouseleave', () => {
       $('#supersize').remove();
   });
   </script>

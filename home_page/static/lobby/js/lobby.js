@@ -1,4 +1,5 @@
 let inviteCount = 0;
+let current_user;
 
 document.getElementById("message").addEventListener("keydown", (event) => {
   // Enter is pressed
@@ -14,11 +15,14 @@ let socket = new WebSocket("ws://localhost:8000/chat/");
 socket.onmessage = (msg) => {
   // console.log(msg.data);
   // console.log(msg.data.message);
-  // console.log(JSON.parse(msg.data));
+  console.log(JSON.parse(msg.data));
   recv = JSON.parse(msg.data);
+  if (recv.current_user !== undefined) {
+    current_user = recv.current_user;
+  }
 
-  if (recv.to !== undefined) {
-    alert("hi! " + recv.to + " from " + recv.from);
+  if (recv.invite !== undefined) {
+    alert("hi! " + recv.invite.to + " from " + recv.invite.from);
   }
   // console.log(recv)
   // console.log(JSON.parse(recv.message));
@@ -29,7 +33,7 @@ socket.onmessage = (msg) => {
     // chat = JSON.parse(recv.chat);
     // console.log(chat);
 
-    $("#chatbox").append("<p>" + recv.chat.username + ": "  + recv.chat.message + "</p>")
+    $("#chatbox").append("<p><strong>" + recv.chat.username + "</strong>: "  + recv.chat.message + "</p>")
 
     // let chat = document.getElementById('chatbox');
     // let para = document.createElement('P');
@@ -47,14 +51,20 @@ socket.onmessage = (msg) => {
       scrollTop: $("#chatbox").prop("scrollHeight")
     }, 1000);
   }
-  else if (recv.user_logging !== undefined) {
+  else if (recv.user_logging !== undefined && current_user !== undefined) {
     $("#user_list").empty(); // clear user list
+    // current_user = recv.current_user;
     recv.user_logging.forEach((users) => {
       // console.log(users)
-      $("#user_list").append("<li class='list-group-item'>" 
-        + users 
-        + "<a class='badge badge-default badge-pill' onclick='print(\"" + users + "\", this)'>Invite</a>"
-        + "</li>");
+      // if (users !== current_user) {
+        $("#user_list").append("<li class='list-group-item'>" 
+          + users 
+          + "<a class='badge badge-default badge-pill' onclick='print(\"" + users + "\", this)'>Invite</a>"
+          + "</li>");
+      // }
+      // else {
+        // $("#user_list").append("<li class='list-group-item'>" + users + "</li>");        
+      // }
     });
     // $("#num_users_online").text("Number of Users Online: " + recv.num_users_online);
     // console.log(recv.user_logging);
@@ -149,16 +159,21 @@ Draggable.create("#box");
 //   div.style.left = e.clientX + 'px';
 // }​
 
-function print(msg, inviteMsg) {
+function print(target_user, inviteMsg) {
   if (inviteMsg.innerHTML === "Inviting...") {
-    console.log("Canceled invite to " + msg);
+    console.log("Canceled invite to " + target_user);
     inviteMsg.innerHTML = "Invite";
     inviteCount--;
   }
   else if (inviteCount < 1) {
-    console.log("Inviting " + msg + " to a game.");
+    console.log("Inviting " + target_user + " to a game.");
     inviteMsg.innerHTML = "Inviting...";
     inviteCount++;
+
+    data = {
+      "to": target_user,
+    }
+    socket.send(JSON.stringify(data));
   }
   else {
     console.log("Already invited someone")

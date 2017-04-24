@@ -8,7 +8,17 @@
   overflow: auto;
 }
 
-#box {
+#user_list {
+  background-color: lightgray; 
+  width: 500px; 
+  height: 300px; 
+  border: 2px solid black; 
+  /*word-wrap: wrap;*/
+  /*word-break: break-all;*/
+  overflow: auto;
+}
+
+/*#box {
   width: 100px;
   height: 100px;
   border: 2px solid black;
@@ -20,7 +30,7 @@
   width: 1000px;
   height: 1000px;
   border: 2px solid black;
-}
+}*/
 
 .box {
   position:absolute;
