@@ -35,16 +35,35 @@
     </div>
   </div> -->
 <div class="container">    
-  <div id="front-zone"></div>
+  <div id="front-zone">
+    <div class="main-front" id="main-slot-1">p1</div>
+    <div class="main-front" id="main-slot-2">p2</div>
+    <div class="main-front" id="main-slot-3">p3</div>
+    <div class="main-front" id="main-slot-4">p4</div>
+    <div class="main-front" id="main-slot-5">p5</div>
+    <div class="main-front" id="main-slot-6">p6</div>
+    <!-- <img class="main-front-target" id="main-slot-1" src="" alt="empty"> -->
+    <!-- <img class="main-front-target" id="main-slot-2" src="" alt="empty"> -->
+    <!-- <img class="main-front-target" id="main-slot-3" src="" alt="empty"> -->
+    <!-- <img class="main-front-target" id="main-slot-4" src="" alt="empty"> -->
+    <!-- <img class="main-front-target" id="main-slot-5" src="" alt="empty"> -->
+    <!-- <img class="main-front-target" id="main-slot-6" src="" alt="empty"> -->
+  </div>
 </div>
 
 <div class=container id="hand">
-  <img class="card" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
-  <img class="card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
-  <img class="card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
-  <img class="card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
-  <img class="card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
+  <img class="card movable-card" id="card1" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+  <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
+  <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
+  <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
+  <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
 </div>
+<!-- document.getElementById("card1")
+<img class=​"card" id=​"card1" src=​"/​static/​cards/​Archer/​Archer.jpg" alt=​"c1" style=​"transform:​ translate3d(0px, 0px, 0px)​;​ cursor:​ move;​ touch-action:​ none;​ user-select:​ none;​">​
+document.getElementById("card1").clientWidth
+98
+document.getElementById("card1").clientHeight
+138 -->
 
 <!-- <div id="bottomRight">
   <img class="card" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
@@ -61,8 +80,9 @@
 {% endblock body %}
 
 {% block scripts %}
-  <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script>
-  <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script>
+  <!-- <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script> -->
+  <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
+  <script src="{% static "jquery/jquery-ui.min.js" %}"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
   // console.log({%static "cards/Archer/"%});
@@ -87,12 +107,36 @@
   </script>
 
   <script>
-    let socket = new WebSocket("ws://localhost:8000/game/");
+    let socket = new WebSocket("ws://" + window.location.host + window.location.pathname); //need to add id here
     socket.onopen = () => {
-      console.log('CONNECTED');
+      console.log('CONNECTED to GAME');
+
+      // data = {
+      //   "hello": "world!",
+      // };
+      // socket.send(JSON.stringify(data));
+      // console.log(data);
     }
+
+
+    socket.onmessage = (msg) => {
+      console.log(JSON.parse(msg.data));
+    }
+
     if (socket.readyState == WebSocket.OPEN) {
       socket.onopen();
     }
+
+    $('#front-zone').on('click', () => {
+      // let localpath = currentImg.target.src;
+      // let index = localpath.search("/static/");
+      // let path = localpath.substr(index);
+      console.log("hello");
+      data = {
+        "sending": "test data!",
+      };
+      socket.send(JSON.stringify(data));
+
+    });
   </script>
 {% endblock scripts %}

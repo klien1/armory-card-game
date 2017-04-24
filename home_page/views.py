@@ -19,23 +19,22 @@ def how_to_play(request):
   return render(request, 'how-to-play/how-to-play.html', {'title': 'How to Play'})
 
 
-@login_required(login_url='/login/')
-def create_game(request):
-  if request.method == 'POST':
-    game_form = Game_instance_form(request.POST)
-    if (game_form.is_valid()):
-      room_name = game_form.cleaned_data['room_name']
-      Game_instance.objects.create(room_name=room_name)
-      game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
-      # return HttpResponseRedirect('/game-1/')
-      return HttpResponseRedirect(game_room)
-  else:
-    game_form = Game_instance_form()
-  context = {
-    'title': 'Creat Game Room',
-    'form': game_form,
-  }
-  return render(request, 'create_game/create_game.html', context)
+# @login_required(login_url='/login/')
+# def create_game(request):
+#   if request.method == 'POST':
+#     game_form = Game_instance_form(request.POST)
+#     if (game_form.is_valid()):
+#       room_name = game_form.cleaned_data['room_name']
+#       Game_instance.objects.create(room_name=room_name)
+#       game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
+#       return HttpResponseRedirect(game_room)
+#   else:
+#     game_form = Game_instance_form()
+#   context = {
+#     'title': 'Creat Game Room',
+#     'form': game_form,
+#   }
+#   return render(request, 'create_game/create_game.html', context)
 
 
 @login_required(login_url='/login/')
@@ -51,13 +50,30 @@ def lobby(request):
   #   if hasattr(user, 'user_online'):
   #     count += 1
   #     users_online_list.append(user)
-  room_id = 34243
+  # room_id = 34243
   # current_user = get_user_model()
-  context = {
+  # context = {
     # 'users_online': users_online_list,
     # 'num_users_online': count,
+  #   'current_user': request.user,
+  #   'room_id': room_id,
+  # }
+  if request.method == 'POST':
+    game_form = Game_instance_form(request.POST)
+    if (game_form.is_valid()):
+      room_name = game_form.cleaned_data['room_name']
+      # Game_instance.objects.create(room_name=room_name)
+      game_form.save()
+      game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
+      return HttpResponseRedirect(game_room)
+    else:
+      game_form = Game_instance_form()
+  else:
+    game_form = Game_instance_form()
+  context = {
+    'title': 'Lobby',
+    'form': game_form,
     'current_user': request.user,
-    'room_id': room_id,
   }
 
   return render(request, 'lobby/lobby.html', context)

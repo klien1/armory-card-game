@@ -9,9 +9,19 @@
 }
 
 #user_list {
-  background-color: lightgray; 
+  /*background-color: lightgray; */
   width: 500px; 
-  height: 300px; 
+  height: 200px; 
+  border: 2px solid black; 
+  /*word-wrap: wrap;*/
+  /*word-break: break-all;*/
+  overflow: auto;
+}
+
+#game_list {
+  /*background-color: lightpink; */
+  width: 500px; 
+  height: 150px; 
   border: 2px solid black; 
   /*word-wrap: wrap;*/
   /*word-break: break-all;*/

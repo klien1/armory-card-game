@@ -11,6 +11,6 @@ urlpatterns = [
     # url(r'^game/', views.game, name='game'),
     url(r'^game-(?P<room_id>[0-9]+)/', views.game, name='game'),
     url(r'^how-to-play/', views.how_to_play, name='how-to-play'),
-    url(r'^create_game/', views.create_game, name='create_game'),
-    # url(r'^(?P<class_type>Archer)/', views.how_to_play, name='classes'),
 ]
+    # url(r'^create_game/', views.create_game, name='create_game'),
+    # url(r'^(?P<class_type>Archer)/', views.how_to_play, name='classes'),

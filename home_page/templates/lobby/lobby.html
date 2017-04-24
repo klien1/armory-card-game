@@ -2,10 +2,11 @@
 {% load static %}
 
 {% block title %}
-    Chatroom
+    {{title}}
 {% endblock title %}
 
 {% block head %}
+<!-- <link rel="alternate" href="{% static "bootstrap-3.3.7-dist/css/bootstrap-theme.min.css" %}"> -->
     <link rel="stylesheet" type="text/css" href="{% static "lobby/css/lobby.css" %}">
 {% endblock head %}
 
@@ -60,13 +61,53 @@
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
         <div class="btn-group">
-          <a href="{% url "home_page:game" room_id %}" class="btn btn-info">Create Game</a>
+          <form class="form-inline" method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            {{form}}
+            <!-- <label class="sr-only" for="inlineFormInput">Name</label> -->
+            <!-- <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInput" placeholder="Create Room Name"> -->
+            <!-- {{form.room_name.label}} -->
+            <!-- {{form.room_name.id_for_label}} -->
+            <!-- {{form.room_name.class}} -->
+            <button class="btn btn-info" type="submit">Create Game Room</button>
+          </form>
+          <!-- <button onclick="toggle_create()" class="btn btn-info">Create Game</button> -->
+          <!-- <a href="{% url "home_page:create_game" %}" class="btn btn-info">Create Game</a> -->
+          <!-- <div class="dropdown"> -->
+            <!-- <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+              <!-- Create Game -->
+            <!-- </button> -->
+            <!-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> -->
+              <!-- <form> -->
+              <!-- {% csrf_token %} -->
+                <!-- {{ form }} -->
+                <!-- <input type="text" name="" value="" placeholder=""> -->
+                <!-- <button type="submit">Create Game Room</button>               -->
+              <!-- </form> -->
+              <!-- <a class="dropdown-item" href="#">Action</a> -->
+              <!-- <a class="dropdown-item" href="#">Another action</a> -->
+              <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+            <!-- </div> -->
+          <!-- </div> -->
+<!--           <div class="container" id="create_game">            
+              <form method="post">
+              {% csrf_token %}
+                {{ form }}
+                <input type="text" name="" value="" placeholder="">
+                <button type="submit">Create Game Room</button>
+              </form>
+          </div> -->
           <!-- <button class="btn btn-info">Join Game</button> -->
           <!-- <a class="btn btn-info" style="border: 1px solid black">Invite Player</a> -->
         </div>
         <div>
-        <h2>Users in Lobby</h2>
-        <ul id="user_list" class="list-group"></ul>
+          <h2>Users in Lobby</h2>
+          <ul id="user_list" class="list-group"></ul>
+        </div>
+        <div>
+          <h2>Active Games</h2>
+          <!-- <button>Refresh Game List</button> -->
+          <ul id="game_list" class="list-group"></ul>
         </div>
       </div>
       <div id="chat-component pull-right" class="col-md-6"> 
@@ -87,11 +128,14 @@
 {% endblock body %}
 
 {% block scripts %}
-  <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script>
-  <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script>
+  <!-- <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script> -->
+  <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
+  <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "lobby/js/lobby.js" %}" type="text/javascript" charset="utf-8"></script>
-  <!-- <script src="{% static "lobby/js/user_login_notification.js" %}" type="text/javascript" charset="utf-8"></script> -->
   <script type="text/javascript">
+    // function toggle_create() {
+    //   $("#create_game").toggle();
+    // }
     // let test = [];
     // let i = 0;
     // {% for user in users_online %}

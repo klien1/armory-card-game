@@ -2,8 +2,8 @@
   margin: auto;
   width: 70%;
   height: 100px;
-  background-color: lightpink;
-  border: 2px solid black;
+  /*background-color: lightpink;*/
+  /*border: 2px solid black;*/
   position: fixed;
   bottom: 20%;
 }
@@ -43,8 +43,10 @@
 img {
   /*width: auto;*/
   /*height: auto;*/
-  width: 7%;
-  height: 7%;
+  width: 98px;
+  height: 138px;
+  /*width: 7%;*/
+  /*height: 7%;*/
 }
 
 /*#bottomRight {
@@ -52,3 +54,14 @@ img {
   position: fixed;
   bottom: 0;
 }*/
+
+.main-front {
+  display: block;
+  margin: 0 auto;
+  margin-left: 2em;
+  float: left;
+  background-color: yellow;
+  width: 98px;
+  height: 138px;
+  border: 2px solid black;
+}

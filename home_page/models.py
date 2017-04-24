@@ -94,5 +94,5 @@ from django.db import models
 
 class Game_instance(models.Model):
   room_name = models.CharField(max_length=50, unique=True)
-  number_of_players = 0
-  max_number_of_players = 2
+  number_of_players = models.IntegerField(default=1)
+  max_number_of_players = models.IntegerField(default=2)

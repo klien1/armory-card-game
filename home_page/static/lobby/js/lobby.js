@@ -9,7 +9,9 @@ document.getElementById("message").addEventListener("keydown", (event) => {
 }, false);
 
 // create connection
-let socket = new WebSocket("ws://localhost:8000/chat/");
+// let socket = new WebSocket("ws://localhost:8000/chat/");
+let socket = new WebSocket("ws://" + window.location.host + "/chat/");
+
 
 // receive message from server
 socket.onmessage = (msg) => {
@@ -24,6 +26,19 @@ socket.onmessage = (msg) => {
   if (recv.invite !== undefined) {
     alert("hi! " + recv.invite.to + " from " + recv.invite.from);
   }
+
+  if (recv.game_rooms !== undefined) {
+    $("#game_list").empty();
+    recv.game_rooms.forEach((room_name) => {
+        $("#game_list").append("<li class='list-group-item'>" 
+          + room_name
+          // + "<p class='badge badge-default badge-pill'>1/2</p>"
+          + "<a class='badge badge-default badge-pill'>Join Game</a>"
+          + "</li>");
+    });
+  }
+
+  
   // console.log(recv)
   // console.log(JSON.parse(recv.message));
   // recvInner = JSON.parse(recv.message);
@@ -51,7 +66,7 @@ socket.onmessage = (msg) => {
       scrollTop: $("#chatbox").prop("scrollHeight")
     }, 1000);
   }
-  else if (recv.user_logging !== undefined && current_user !== undefined) {
+  else if (recv.user_logging !== undefined) {
     $("#user_list").empty(); // clear user list
     // current_user = recv.current_user;
     recv.user_logging.forEach((users) => {
@@ -129,7 +144,7 @@ function send_message() {
 // function printSomething() {
 //   console.log("clicked!");
 // }
-Draggable.create("#box");
+// Draggable.create("#box");
 // Draggable.create("#box", {bounds:"#square"});
 
 // var box = document.getElementById("box"); //or use jQuery's $("#photo")
@@ -179,3 +194,10 @@ function print(target_user, inviteMsg) {
     console.log("Already invited someone")
   }
 }
+
+// function refresh_game_list() {
+//   data = {
+//     "refresh_game_list": true,
+//   }
+//   socket.send(JSON.stringify(data));
+// }
