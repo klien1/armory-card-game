@@ -19,43 +19,28 @@
 
   <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <!-- <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> -->
-
-                <!-- <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i> -->
-            <!-- </button> -->
             <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> -->
         <div>
-            <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a class="page-scroll" href="#">Lobby</a>
+            </li>
+            {% if user.is_authenticated %}
                 <li>
-                    <a class="page-scroll" href="#">Lobby</a>
+                    <a class="page-scroll" href="{% url "home_page:logout" %}">Sign Out</a>
                 </li>
-                {% if user.is_authenticated %}
-                    <li>
-                        <a class="page-scroll" href="{% url "home_page:logout" %}">Sign Out</a>
-                    </li>
-                {% else %}                       
-                    <li>
-                        <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
-                    </li>
-                {% endif %}
-            </ul>
+            {% else %}                       
+                <li>
+                    <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
+                </li>
+            {% endif %}
+          </ul>
         </div>
-        <!-- /.navbar-collapse -->
-    <!-- </div> -->
-    <!-- /.container-fluid -->
+    </div>
   </nav>
 
-<!-- <h1>numbers:</h1> -->
-<!-- {% for number in numbers %} -->
-  <!-- <h1>{{number}}</h1> -->
-<!-- {% endfor %} -->
-<!-- {{room_id}} -->
 
   <div class="container">
     <div class="row">    
@@ -64,48 +49,15 @@
           <form class="form-inline" method="post" accept-charset="utf-8">
             {% csrf_token %}
             {{form}}
-            <!-- <label class="sr-only" for="inlineFormInput">Name</label> -->
-            <!-- <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInput" placeholder="Create Room Name"> -->
-            <!-- {{form.room_name.label}} -->
-            <!-- {{form.room_name.id_for_label}} -->
-            <!-- {{form.room_name.class}} -->
             <button class="btn btn-info" type="submit">Create Game Room</button>
           </form>
-          <!-- <button onclick="toggle_create()" class="btn btn-info">Create Game</button> -->
-          <!-- <div class="dropdown"> -->
-            <!-- <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
-              <!-- Create Game -->
-            <!-- </button> -->
-            <!-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> -->
-              <!-- <form> -->
-              <!-- {% csrf_token %} -->
-                <!-- {{ form }} -->
-                <!-- <input type="text" name="" value="" placeholder=""> -->
-                <!-- <button type="submit">Create Game Room</button>               -->
-              <!-- </form> -->
-              <!-- <a class="dropdown-item" href="#">Action</a> -->
-              <!-- <a class="dropdown-item" href="#">Another action</a> -->
-              <!-- <a class="dropdown-item" href="#">Something else here</a> -->
-            <!-- </div> -->
-          <!-- </div> -->
-<!--           <div class="container" id="create_game">            
-              <form method="post">
-              {% csrf_token %}
-                {{ form }}
-                <input type="text" name="" value="" placeholder="">
-                <button type="submit">Create Game Room</button>
-              </form>
-          </div> -->
-          <!-- <button class="btn btn-info">Join Game</button> -->
-          <!-- <a class="btn btn-info" style="border: 1px solid black">Invite Player</a> -->
         </div>
         <div>
           <h2>Users in Lobby</h2>
           <ul id="user_list" class="list-group"></ul>
         </div>
         <div>
-          <h2>Active Games</h2>
-          <!-- <button>Refresh Game List</button> -->
+          <h2>Active Game Rooms</h2>
           <ul id="game_list" class="list-group"></ul>
         </div>
       </div>
@@ -118,12 +70,6 @@
       </div>
     </div>
   </div>
-
-<!-- <div class=container> -->
-  <!-- <div id="square"> -->
-    <!-- <div id="box"></div> -->
-  <!-- </div> -->
-<!-- </div> -->
 {% endblock body %}
 
 {% block scripts %}
