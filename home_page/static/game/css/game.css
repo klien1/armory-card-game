@@ -65,3 +65,42 @@ img {
   height: 138px;
   border: 2px solid black;
 }
+
+.start-class {
+  width: 20%;
+  height: 20%;
+}
+
+/*#Archer {
+  background: url("") no-repeat fixed center;
+}
+
+#Cleric {
+  background: url("") no-repeat fixed center;
+}
+
+#Mage {
+  background: url("") no-repeat fixed center;
+}
+
+#Warrior {
+  background: url("") no-repeat fixed center;
+}*/
+
+/*#pick-classs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+*/  /*vertical-align: middle;*/
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*text-align: center;*/
+  /*display: block;*/
+  /*background-color: gray;*/
+  /*vertical-align: center;*/
+  /*margin: 0 auto;*/
+/*}*/
+
+#board {
+  display: none;
+}

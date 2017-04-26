@@ -34,7 +34,7 @@
       </div>
     </div>
   </div> -->
-<div class="container">    
+<div class="container" id="board">    
   <div id="front-zone">
     <div class="main-front" id="main-slot-1">p1</div>
     <div class="main-front" id="main-slot-2">p2</div>
@@ -50,13 +50,25 @@
     <!-- <img class="main-front-target" id="main-slot-6" src="" alt="empty"> -->
   </div>
 </div>
+<div class="container" id="pick-class">
+  <h2 class="col-md-12 text-center" id="pick-class-title">Choose a Deck</h2>
+  <div id="pick-class-images" class="text-center">
+    <img class="start-class" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="Archer">
+    <img class="start-class" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="Cleric">
+    <img class="start-class" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="Mage">
+    <img class="start-class" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="Warrior">
+  </div>
+</div>
 
 <div class=container id="hand">
-  <img class="card movable-card" id="card1" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
-  <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
-  <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
-  <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
-  <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
+<!--   <img class="card movable-card" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+  <img class="card movable-card" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="c1">
+  <img class="card movable-card" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="c1">
+  <img class="card movable-card" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="c1"> -->
+  <!-- <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1"> -->
+  <!-- <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1"> -->
+  <!-- <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1"> -->
+  <!-- <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1"> -->
 </div>
 <!-- document.getElementById("card1")
 <img class=​"card" id=​"card1" src=​"/​static/​cards/​Archer/​Archer.jpg" alt=​"c1" style=​"transform:​ translate3d(0px, 0px, 0px)​;​ cursor:​ move;​ touch-action:​ none;​ user-select:​ none;​">​
@@ -77,6 +89,7 @@ document.getElementById("card1").clientHeight
     <!-- <div class="card"><img src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1"></div> -->
 <!--   </div>
 </div> -->
+
 {% endblock body %}
 
 {% block scripts %}
@@ -84,59 +97,4 @@ document.getElementById("card1").clientHeight
   <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
   <script src="{% static "jquery/jquery-ui.min.js" %}"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-  // console.log({%static "cards/Archer/"%});
-  $('img').on('mouseenter', (currentImg) => {
-      // console.log(test.target.src);
-      let localpath = currentImg.target.src;
-      // console.log(localpath);
-      let index = localpath.search("/static/");
-      // console.log(localpath.substr(index));
-      let path = localpath.substr(index);
-      // let path = test.target.src;
-      let image = document.createElement('IMG');
-      image.src = path;
-      image.id = "supersize";
-      image.style="width: 20%; height: 20%; float:right; margin-top:2em;";
-      $("body").append(image);
-  });
-
-  $('img').on('mouseleave', () => {
-      $('#supersize').remove();
-  });
-  </script>
-
-  <script>
-    let socket = new WebSocket("ws://" + window.location.host + window.location.pathname); //need to add id here
-    socket.onopen = () => {
-      console.log('CONNECTED to GAME');
-
-      // data = {
-      //   "hello": "world!",
-      // };
-      // socket.send(JSON.stringify(data));
-      // console.log(data);
-    }
-
-
-    socket.onmessage = (msg) => {
-      console.log(JSON.parse(msg.data));
-    }
-
-    if (socket.readyState == WebSocket.OPEN) {
-      socket.onopen();
-    }
-
-    $('#front-zone').on('click', () => {
-      // let localpath = currentImg.target.src;
-      // let index = localpath.search("/static/");
-      // let path = localpath.substr(index);
-      console.log("hello");
-      data = {
-        "sending": "test data!",
-      };
-      socket.send(JSON.stringify(data));
-
-    });
-  </script>
 {% endblock scripts %}

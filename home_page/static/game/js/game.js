@@ -1,70 +1,73 @@
-//see http://www.greensock.com/draggable/ for more details.
-$(".movable-card").draggable({
-  // snap: "#front-zone"
-  snap: ".main-front",
-  revert: true
-});
+let socket = new WebSocket("ws://" + window.location.host + window.location.pathname); //need to add id here
+socket.onopen = () => {
+  // console.log('CONNECTED to GAME');
 
-//draggable
-//droppable
-// $(".movable-card").draggable({
-  // helper: 'original,'
-// });
+  // data = {
+  //   "hello": "world!",
+  // };
+  // socket.send(JSON.stringify(data));
+  // console.log(data);
 
-// var droppables = $(".movable-card");
-// var dropArea = $("#front-zone");
-
-//the overlapThreshold can be a percentage ("50%", for example, would only trigger when 
-//50% or more of the surface area of either element overlaps) or 
-//a number of pixels (20 would only trigger when 20 pixels or more overlap), 
-//or 0 will trigger when any part of the two elements overlap.
-// var overlapThreshold = "50%";
-
-// Draggable.create(droppables, {
-//   bounds: window,
-//   onDrag: function(e) {
-//     if (this.hitTest(dropArea, overlapThreshold)) {
-//       $(this.target).addClass("valid");
-//     } else {
-//       $(this.target).removeClass("valid");
-//     }
-//   },
-//   onDragEnd: function(e) {
-//     //instead of doing hitTest again, just see if it has the highligh class.
-//     if (!$(this.target).hasClass("valid")) {
-//       //if there isn't a highlight, send it back to starting position
-//       TweenLite.to(this.target, 0.2, {
-//         x: 0,
-//         y: 0
-//       });
-//     } else {
-//       console.log("placed correctly!");
-//       console.log(this.target);
-//       $(this.target).removeClass("movable-card");
-//     }
-
-//   }
-// });
-
-function display(pic) {
-  
-  // console.log(image);
-  // console.log(image.src);
-
-  let image = document.createElement(pic.src);
-  document.body.appendChild(image);
 }
 
-// $('img').hover(function() {
-//     $(this).width('20%').height('20%');
-// }, function() {
-//     $(this).width('7%').height('7%');
-// });
 
-// $('img').on("mouseenter", () => {
-//     console.log(this);
-// });
+socket.onmessage = (msg) => {
+  console.log(JSON.parse(msg.data));
+}
 
-// $('img').on("mouseleave", function() {
-//     console.log("end");
-// });
+if (socket.readyState == WebSocket.OPEN) {
+  socket.onopen();
+}
+
+
+function display(pic) {
+  let image = document.createElement(pic.src);
+  document.body.appendChild(image);
+  // $("body").append("<img src=\'" + pic.src + "\'alt="supersize">");
+}
+
+// document.ready()
+$(() => {
+  // create super image on mouse over
+  $('.card').on('mouseenter', (currentImg) => {
+    let localpath = currentImg.target.src;
+    let index = localpath.search('/static/');
+    let path = localpath.substr(index);
+
+    $('body').append("<img id='supersize' src='" + path + 
+      "' style='width: 20%; height: 20%; float:right; margin-top:2em; margin-right:1em'" +
+      " alt='superimage'>");
+  });
+
+  // delete super image
+  $('.card').on('mouseleave', () => {
+      $('#supersize').remove();
+  });
+
+  // $('#front-zone').on('click', () => {
+  // let localpath = currentImg.target.src;
+  // let index = localpath.search("/static/");
+  // let path = localpath.substr(index);
+  // console.log("hello");
+  // data = {
+  //   "sending": "test data!",
+  // };
+  // socket.send(JSON.stringify(data));
+
+  // });
+
+
+  $('.movable-card').draggable({
+    // snap: "#front-zone"
+    snap: '.main-front',
+    revert: true
+  });
+
+  $('.start-class').on('click', (picked) => {
+    console.log(picked.target.id);
+    $("#board").show();
+    // console.log($(this).attr('id'));
+    $('#pick-class').hide();
+  });
+
+});

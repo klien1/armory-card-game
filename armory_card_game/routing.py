@@ -13,8 +13,4 @@ channel_routing = [
   route("websocket.connect", ws_connect_game, path=r"^/game-(?P<room_id>[0-9]+)/"),
   route("websocket.receive", ws_message_game, path=r"^/game-(?P<room_id>[0-9]+)/"),
   route("websocket.disconnect", ws_disconnect_game, path=r"^/game-(?P<room_id>[0-9]+)/"),
-
-  # route("websocket.connect", ws_connect_game, path=r"^game-7/"),
-  # route("websocket.receive", ws_message_game, path=r"^game-7/"),
-  # route("websocket.disconnect", ws_disconnect_game, path=r"^game-7/"),
 ]
