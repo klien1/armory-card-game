@@ -6,9 +6,9 @@ from home_page.consumers import *
 
 
 channel_routing = [
-  route("websocket.connect", ws_connect, path=r"^/chat/"),
-  route("websocket.receive", ws_message, path=r"^/chat/"),
-  route("websocket.disconnect", ws_disconnect, path=r"^/chat/"),
+  route("websocket.connect", ws_connect, path=r"^/lobby/"),
+  route("websocket.receive", ws_message, path=r"^/lobby/"),
+  route("websocket.disconnect", ws_disconnect, path=r"^/lobby/"),
 
   route("websocket.connect", ws_connect_game, path=r"^/game-(?P<room_id>[0-9]+)/"),
   route("websocket.receive", ws_message_game, path=r"^/game-(?P<room_id>[0-9]+)/"),

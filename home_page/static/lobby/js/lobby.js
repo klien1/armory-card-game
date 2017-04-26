@@ -6,7 +6,7 @@ document.getElementById("message").addEventListener("keydown", (event) => {
 }, false);
 
 // create connection
-let socket = new WebSocket("ws://" + window.location.host + "/chat/");
+let socket = new WebSocket("ws://" + window.location.host + "/lobby/");
 
 
 // receive message from server
