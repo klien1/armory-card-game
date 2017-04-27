@@ -32,7 +32,7 @@ socket.onmessage = (msg) => {
     });
   }
 
-  
+  // add append id and set id to username
   if (recv.chat !== undefined && recv.chat.message.length !== 0) {
     $("#chatbox").append(
       "<p><strong>" + recv.chat.username + "</strong>: "  + recv.chat.message + "</p>"

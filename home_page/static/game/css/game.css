@@ -1,32 +1,49 @@
-#front-zone {
-  margin: auto;
-  width: 70%;
-  height: 100px;
-  /*background-color: lightpink;*/
-  /*border: 2px solid black;*/
-  position: fixed;
-  bottom: 20%;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#board {
+  position: relative;
+}
+
+#play-field {
+
 }
 
 #hand {
+  position: absolute; 
+  bottom: 0;
+}
+/*#front-zone {
+  margin: auto;
+  width: 70%;
+  height: 100px;
+  background-color: lightpink;
+  border: 2px solid black;
+  position: fixed;
+  bottom: 20%;
+}*/
+
   /*margin: auto;*/
 /*  width: 50%;
   height: 100px;
   bottom: 20%;*/
+  /*background-color: black;*/
+  /*margin: 0 auto;*/
 
+/*#hand {
   bottom: 2%;
   height: auto;
-  /*margin: 0 auto;*/
-  /*background-color: black;*/
   position: fixed;
   width: 100%;
   text-align: center;
-}
+}*/
 
-#card-center {
+/*#card-center {
   vertical-align: bottom;
   margin: 0 auto;
-}
+}*/
 
 .card {
   /*display: block;*/
@@ -55,10 +72,10 @@ img {
   bottom: 0;
 }*/
 
-.main-front {
+.main-front, .enemy-zone {
   display: block;
-  margin: 0 auto;
-  margin-left: 2em;
+  /*margin: 0 auto;*/
+  margin: 1em 1em;
   float: left;
   background-color: yellow;
   width: 98px;
@@ -66,16 +83,24 @@ img {
   border: 2px solid black;
 }
 
+.enemy-zone {
+  background-color: red; 
+}
+
 .start-class {
   width: 20%;
   height: 20%;
 }
 
-/*#Archer {
-  background: url("") no-repeat fixed center;
+.Archer {
+  background: url("../../cards/Archer/Archer.jpg") no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
-#Cleric {
+/*#Cleric {
   background: url("") no-repeat fixed center;
 }
 
@@ -104,3 +129,12 @@ img {
 #board {
   display: none;
 }
+
+.empty {
+  display: block;
+  margin-left: 2em;
+  float: left;
+  width: 98px;
+  height: 138px;
+  border: 2px solid white;
+} 

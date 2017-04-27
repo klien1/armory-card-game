@@ -13,6 +13,12 @@ socket.onopen = () => {
 
 socket.onmessage = (msg) => {
   console.log(JSON.parse(msg.data));
+  action = JSON.parse(msg.data);
+
+  if (action.redirect !== undefined) {
+    // window.location.replace("http://" + window.location.host + action.redirect);
+    window.location.href = "http://" + window.location.host + action.redirect;
+  }
 }
 
 if (socket.readyState == WebSocket.OPEN) {
@@ -44,29 +50,44 @@ $(() => {
       $('#supersize').remove();
   });
 
-  // $('#front-zone').on('click', () => {
-  // let localpath = currentImg.target.src;
-  // let index = localpath.search("/static/");
-  // let path = localpath.substr(index);
-  // console.log("hello");
-  // data = {
-  //   "sending": "test data!",
-  // };
-  // socket.send(JSON.stringify(data));
+  $('#front-zone').on('click', (test_function) => {
+    // let localpath = currentImg.target.src;
+    // let index = localpath.search("/static/");
+    // let path = localpath.substr(index);
+    console.log("hello");
+    data = {
+      "sending": "test data!",
+    };
+    socket.send(JSON.stringify(data));
 
-  // });
+  });
 
 
   $('.movable-card').draggable({
     // snap: "#front-zone"
-    snap: '.main-front',
+    containment: 'window',
+    // snap: '.main-front',
     revert: true
   });
+
+  $('.main-front').droppable({
+    drop: onTarget,
+    out: offTarget,
+  });
+
+  function onTarget(event, ui) {
+    console.log(ui);
+    ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
+    ui.draggable.draggable('option', 'revert', false);
+  }
+
+  function offTarget(event, ui) {
+    ui.draggable.draggable('option', 'revert', true);
+  }
 
   $('.start-class').on('click', (picked) => {
     console.log(picked.target.id);
     $("#board").show();
-    // console.log($(this).attr('id'));
     $('#pick-class').hide();
   });
 

@@ -10,46 +10,69 @@
 {% endblock head %}
 
 {% block body %}
-<br><br>
-<!--   <div class="container">
-      <h1>Welcome to the GAME</h1>
-  </div> -->
-
-
-<!--   <div class="container">
-    <div class="row">    
-      <div id="lobby-component" class="col-md-6">
-      <div class="btn-group">
-        <button class="btn btn-info">Create Game</button>
-        <button class="btn btn-info">Join Game</button>
-        <button class="btn btn-info">Invite Player</button>
-      </div>
-      </div>
-      <div id="chat-component pull-right" class="col-md-6"> 
-        <h2>Chatroom</h2>   
-        <div id="chatbox"></div>
-        <div id="end-chat"></div>
-        <input id="message" type="text" placeholder="enter message" style="width: 375px">
-        <button type="submit" onclick="send_message()" class="btn btn-primary">Send message</button>
-      </div>
+<div class="container col-md-8" id="board">  
+  <div id="play-field">  
+    <div class="col-md-12" id="player2-front-zone">
+      <img class="main-front card" id="p2-character-slot" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-1" src="" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-2" src="" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-3" src="" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-4" src="" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-5" src="" alt="player2-front-zone">
+      <img class="main-front" id="p2-main-slot-6" src="" alt="player2-front-zone">
     </div>
-  </div> -->
-<div class="container" id="board">    
-  <div id="front-zone">
-    <div class="main-front" id="main-slot-1">p1</div>
-    <div class="main-front" id="main-slot-2">p2</div>
-    <div class="main-front" id="main-slot-3">p3</div>
-    <div class="main-front" id="main-slot-4">p4</div>
-    <div class="main-front" id="main-slot-5">p5</div>
-    <div class="main-front" id="main-slot-6">p6</div>
-    <!-- <img class="main-front-target" id="main-slot-1" src="" alt="empty"> -->
-    <!-- <img class="main-front-target" id="main-slot-2" src="" alt="empty"> -->
-    <!-- <img class="main-front-target" id="main-slot-3" src="" alt="empty"> -->
-    <!-- <img class="main-front-target" id="main-slot-4" src="" alt="empty"> -->
-    <!-- <img class="main-front-target" id="main-slot-5" src="" alt="empty"> -->
-    <!-- <img class="main-front-target" id="main-slot-6" src="" alt="empty"> -->
+    <div class="col-md-12" id="player2-enemy">
+      <div class="empty"></div>
+      <img class="enemy-zone" id="p2-enemy-main-slot-1" src="" alt="player2-enemy-zone">
+      <img class="enemy-zone" id="p2-enemy-main-slot-2" src="" alt="player2-enemy-zone">
+      <img class="enemy-zone" id="p2-enemy-main-slot-3" src="" alt="player2-enemy-zone">
+      <img class="enemy-zone" id="p2-enemy-main-slot-4" src="" alt="player2-enemy-zone">
+      <img class="enemy-zone" id="p2-enemy-main-slot-5" src="" alt="player2-enemy-zone">
+      <img class="enemy-zone" id="p2-enemy-main-slot-6" src="" alt="player2-enemy-zone">
+    </div>
+    <div class="col-md-12" id="player1-enemy">
+      <div class="empty">
+      <p>
+        p1 hp: 10
+      </p>
+      <p>
+        p1 cards left in deck: 10
+      </p>
+      </div>
+      <img class="enemy-zone" id="p1-enemy-main-slot-1" src="" alt="player1-enemy-zone">
+      <img class="enemy-zone" id="p1-enemy-main-slot-2" src="" alt="player1-enemy-zone">
+      <img class="enemy-zone" id="p1-enemy-main-slot-3" src="" alt="player1-enemy-zone">
+      <img class="enemy-zone" id="p1-enemy-main-slot-4" src="" alt="player1-enemy-zone">
+      <img class="enemy-zone" id="p1-enemy-main-slot-5" src="" alt="player1-enemy-zone">
+      <img class="enemy-zone" id="p1-enemy-main-slot-6" src="" alt="player1-enemy-zone">
+    </div>
+    <div class="col-md-12" id="player1-front-zone">
+      <img class="main-front card" id="p1-character-slot" src="{% static "cards/Mage/Mage.jpg"%}" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-1" src="" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-2" src="" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-3" src="" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-4" src="" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-5" src="" alt="player1-front-zone">
+      <img class="main-front" id="p1-main-slot-6" src="" alt="player1-front-zone">
+    </div>
+    <div class="col-md-12">
+      <div class="empty"></div>
+    </div>
+  </div>  
+  <div class=container id="hand">
+    <img class="card movable-card" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+    <img class="card movable-card" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="c1">
+    <img class="card movable-card" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="c1">
+    <img class="card movable-card" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="c1">
+    <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
+    <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
+    <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
+    <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
   </div>
 </div>
+<!-- <div class="container col-md-4" style="background-color: lightblue;">
+  test
+</div>   -->
 <div class="container" id="pick-class">
   <h2 class="col-md-12 text-center" id="pick-class-title">Choose a Deck</h2>
   <div id="pick-class-images" class="text-center">
@@ -59,17 +82,9 @@
     <img class="start-class" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="Warrior">
   </div>
 </div>
+<!-- <div id="test" class="Archer"></div> -->
 
-<div class=container id="hand">
-<!--   <img class="card movable-card" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
-  <img class="card movable-card" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="c1">
-  <img class="card movable-card" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="c1">
-  <img class="card movable-card" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="c1"> -->
-  <!-- <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1"> -->
-  <!-- <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1"> -->
-  <!-- <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1"> -->
-  <!-- <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1"> -->
-</div>
+
 <!-- document.getElementById("card1")
 <img class=​"card" id=​"card1" src=​"/​static/​cards/​Archer/​Archer.jpg" alt=​"c1" style=​"transform:​ translate3d(0px, 0px, 0px)​;​ cursor:​ move;​ touch-action:​ none;​ user-select:​ none;​">​
 document.getElementById("card1").clientWidth
@@ -93,8 +108,6 @@ document.getElementById("card1").clientHeight
 {% endblock body %}
 
 {% block scripts %}
-  <!-- <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script> -->
-  <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
   <script src="{% static "jquery/jquery-ui.min.js" %}"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
 {% endblock scripts %}
