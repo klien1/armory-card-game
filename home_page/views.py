@@ -22,15 +22,14 @@ def lobby(request):
   if request.method == 'POST':
     game_form = Game_instance_form(request.POST)
     if (game_form.is_valid()):
+      #get room name to search for it in database then redirect
       room_name = game_form.cleaned_data['room_name']
-      # Game_instance.objects.create(room_name=room_name)
       game_form.save()
       game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
       return HttpResponseRedirect(game_room)
-    else:
-      game_form = Game_instance_form()
   else:
     game_form = Game_instance_form()
+
   context = {
     'title': 'Lobby',
     'form': game_form,

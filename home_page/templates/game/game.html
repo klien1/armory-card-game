@@ -13,7 +13,7 @@
 <div class="container col-md-8" id="board">  
   <div id="play-field">  
     <div class="col-md-12" id="player2-front-zone">
-      <img class="main-front card" id="p2-character-slot" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="player2-front-zone">
+      <img class="main-front card" id="p2-character-slot" src="" alt="player2-front-zone">
       <img class="main-front" id="p2-main-slot-1" src="" alt="player2-front-zone">
       <img class="main-front" id="p2-main-slot-2" src="" alt="player2-front-zone">
       <img class="main-front" id="p2-main-slot-3" src="" alt="player2-front-zone">
@@ -47,7 +47,7 @@
       <img class="enemy-zone" id="p1-enemy-main-slot-6" src="" alt="player1-enemy-zone">
     </div>
     <div class="col-md-12" id="player1-front-zone">
-      <img class="main-front card" id="p1-character-slot" src="{% static "cards/Mage/Mage.jpg"%}" alt="player1-front-zone">
+      <img class="main-front card" id="p1-character-slot" src="" alt="player1-front-zone">
       <img class="main-front" id="p1-main-slot-1" src="" alt="player1-front-zone">
       <img class="main-front" id="p1-main-slot-2" src="" alt="player1-front-zone">
       <img class="main-front" id="p1-main-slot-3" src="" alt="player1-front-zone">
@@ -109,5 +109,6 @@ document.getElementById("card1").clientHeight
 
 {% block scripts %}
   <script src="{% static "jquery/jquery-ui.min.js" %}"></script>
+  <script src="{% static "game/js/game.socket.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
 {% endblock scripts %}

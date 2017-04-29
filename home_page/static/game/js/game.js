@@ -1,37 +1,3 @@
-let socket = new WebSocket("ws://" + window.location.host + window.location.pathname); //need to add id here
-socket.onopen = () => {
-  // console.log('CONNECTED to GAME');
-
-  // data = {
-  //   "hello": "world!",
-  // };
-  // socket.send(JSON.stringify(data));
-  // console.log(data);
-
-}
-
-
-socket.onmessage = (msg) => {
-  console.log(JSON.parse(msg.data));
-  action = JSON.parse(msg.data);
-
-  if (action.redirect !== undefined) {
-    // window.location.replace("http://" + window.location.host + action.redirect);
-    window.location.href = "http://" + window.location.host + action.redirect;
-  }
-}
-
-if (socket.readyState == WebSocket.OPEN) {
-  socket.onopen();
-}
-
-
-function display(pic) {
-  let image = document.createElement(pic.src);
-  document.body.appendChild(image);
-  // $("body").append("<img src=\'" + pic.src + "\'alt="supersize">");
-}
-
 // document.ready()
 $(() => {
   // create super image on mouse over
@@ -50,40 +16,53 @@ $(() => {
       $('#supersize').remove();
   });
 
-  $('#front-zone').on('click', (test_function) => {
-    // let localpath = currentImg.target.src;
-    // let index = localpath.search("/static/");
-    // let path = localpath.substr(index);
-    console.log("hello");
-    data = {
-      "sending": "test data!",
-    };
-    socket.send(JSON.stringify(data));
-
-  });
+  function display(pic) {
+    let image = document.createElement(pic.src);
+    document.body.appendChild(image);
+  }
 
 
   $('.movable-card').draggable({
-    // snap: "#front-zone"
     containment: 'window',
-    // snap: '.main-front',
     revert: true
   });
 
   $('.main-front').droppable({
+    accept: allowedTarget,
     drop: onTarget,
     out: offTarget,
   });
 
+  function allowedTarget(target) {
+    // console.log(target);
+    // if (ui.draggable)
+    return true;
+  }
+
   function onTarget(event, ui) {
     console.log(ui);
-    ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
+    ui.draggable.position({ 
+      of: $(this), 
+      my: 'left top', 
+      at: 'left top' 
+    });
     ui.draggable.draggable('option', 'revert', false);
   }
 
   function offTarget(event, ui) {
     ui.draggable.draggable('option', 'revert', true);
   }
+
+  $('.start-class').hover(
+    //mouse enter
+    function() { //can't use arrow functions for this
+      $(this).addClass('border-green');
+    },
+    //mouse leave
+    function() { //can't use arrow functions for this
+      $(this).removeClass('border-green');
+    }
+  );
 
   $('.start-class').on('click', (picked) => {
     console.log(picked.target.id);

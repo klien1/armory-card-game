@@ -11,44 +11,61 @@
 {% endblock head %}
 
 {% block body %}
-<br><br><br><br>
-  <div class="container">
+<br><br>
+<!--   <div class="container">
       <h1>Welcome {{current_user}}</h1>
   </div>
+ -->
 
-
-  <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand page-scroll" href="{% url "home_page:home" %}">Armory Card Game</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="{% url "home_page:how-to-play" %}">How to Play</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#">Lobby</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a class="page-scroll" href="{% url "home_page:logout" %}">Sign Out</a>
+                        </li>
+                    {% else %}                       
+                        <li>
+                            <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-        <div>
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a class="page-scroll" href="#">Lobby</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li>
-                    <a class="page-scroll" href="{% url "home_page:logout" %}">Sign Out</a>
-                </li>
-            {% else %}                       
-                <li>
-                    <a class="page-scroll" href="{% url "home_page:login" %}">Sign In</a>
-                </li>
-            {% endif %}
-          </ul>
-        </div>
-    </div>
-  </nav>
+    </nav>
 
 
   <div class="container">
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
+        <h1>Welcome {{current_user}}</h1>
         <div class="btn-group">
           <form class="form-inline" method="post" accept-charset="utf-8">
             {% csrf_token %}
-            {{form}}
+            <p>
+              <label>              
+                {{form.room_name.label}}:
+              </label>
+              {{form.room_name}}
+              {{form.room_name.errors}}
+            </p>
+            <p>
+              <label>              
+                {{form.max_number_of_players.label}}:
+              </label>
+              {{form.max_number_of_players}}
+              {{form.max_number_of_players.errors}}
+            </p>
             <button class="btn btn-info" type="submit">Create Game Room</button>
           </form>
         </div>
@@ -66,7 +83,7 @@
         <div id="chatbox"></div>
         <div id="end-chat"></div>
         <input id="message" type="text" placeholder="enter message">
-        <button type="submit" onclick="send_message()" class="btn btn-primary">Send message</button>
+        <button type="submit" onclick="send_message()" class="btn btn-primary">Send</button>
       </div>
     </div>
   </div>
@@ -78,6 +95,8 @@
   <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "lobby/js/lobby.js" %}" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    console.log($(".list-group-item").text());
+
     // function toggle_create() {
     //   $("#create_game").toggle();
     // }

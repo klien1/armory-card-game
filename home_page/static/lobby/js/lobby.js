@@ -12,27 +12,26 @@ let socket = new WebSocket("ws://" + window.location.host + "/lobby/");
 // receive message from server
 socket.onmessage = (msg) => {
   let recv = JSON.parse(msg.data);
-  // if (recv.current_user !== undefined) {
-  //   current_user = recv.current_user;
-  // }
 
   if (recv.invite !== undefined) {
-    alert("hi! " + recv.invite.to + " from " + recv.invite.from);
+    console.log("Hi! " + recv.invite.to + ". You have been invited to play with " + recv.invite.from);
+  }
+
+  if (recv.alert !== undefined) {
+    alert(recv.alert);
   }
 
   if (recv.game_rooms !== undefined) {
     $("#game_list").empty();
     recv.game_rooms.forEach((room_name) => {
         $("#game_list").append("<li class='list-group-item'>" + room_name + 
-          // "<form>" + 
-          "<a class='badge badge-default badge-pill'>Join Game</a>" + 
-          // "</form>" + 
+          "<a class='badge badge-default badge-pill'" + 
+          "onclick='check_room(\"" + room_name + "\")'>Join Game</a>" + 
           "</li>"
         );
     });
   }
 
-  // add append id and set id to username
   if (recv.chat !== undefined && recv.chat.message.length !== 0) {
     $("#chatbox").append(
       "<p><strong>" + recv.chat.username + "</strong>: "  + recv.chat.message + "</p>"
@@ -41,15 +40,30 @@ socket.onmessage = (msg) => {
       scrollTop: $("#chatbox").prop("scrollHeight")
     }, 1000);
   }
-  else if (recv.user_logging !== undefined) {
+
+  if (recv.user_logging !== undefined) {
     // clear user list
     $("#user_list").empty(); 
     recv.user_logging.forEach((users) => {
         $("#user_list").append("<li class='list-group-item'>" + 
           users + 
-          "<a class='badge badge-default badge-pill' onclick='print(\"" + users + "\", this)'>Poke</a>" + 
+          "<a class='badge badge-default badge-pill' onclick='print(\"" + users + "\", this)'>Invite</a>" + 
           "</li>");
     });
+  }
+
+  // if (recv.user_logging_out !== undefined) {
+    // console.log(recv.user_logging_out);
+    // let user = "#user::" + recv.user_logging_out;
+    // console.log($(user).text());
+    // $("#user::" + recv.user_logging_out).remove();
+    // child = document.getElementById('#user::'+recv.user_logging_out);
+    // parent = document.getElementById('user_list');
+    // parent.removeChild(child);
+  // }
+
+  if (recv.room_path !== undefined) {
+    window.location.href = "http://" + window.location.host + recv.room_path;
   }
 }
 
@@ -78,16 +92,18 @@ function send_message() {
 
 let inviteCount = 0;
 function print(target_user, inviteMsg) {
-  if (inviteMsg.innerHTML === "Poking...") {
+  // if ($("#game_list>li").attr('id') === "join::dfsdf") {
+  // if ($("#user_list>li").attr('id') === "user::kevin") {
+  //   console.log("match found!");
+  // }
+  if (inviteMsg.innerHTML === "Inviting...") {
     console.log("Canceled invite to " + target_user);
-    // inviteMsg.innerHTML = "Invite";
-    inviteMsg.innerHTML = "Poke";
+    inviteMsg.innerHTML = "Invite";
     inviteCount--;
   }
   else if (inviteCount < 1) {
     console.log("Inviting " + target_user + " to a game.");
-    // inviteMsg.innerHTML = "Inviting...";
-    inviteMsg.innerHTML = "Poking...";
+    inviteMsg.innerHTML = "Inviting...";
     inviteCount++;
 
     data = {
@@ -98,4 +114,12 @@ function print(target_user, inviteMsg) {
   else {
     console.log("Already invited someone");
   }
+}
+
+function check_room(room_name) {
+  console.log(room_name);
+  data = {
+    "join_game": room_name,
+  }
+  socket.send(JSON.stringify(data));
 }

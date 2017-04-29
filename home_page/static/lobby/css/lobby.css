@@ -1,7 +1,8 @@
 
 #chatbox {
-  background-color: lightblue; 
-  width: 500px; 
+  background-color: lightblue;
+  width: 100%; 
+  /*width: 500px; */
   height: 300px; 
   border: 2px solid black; 
   word-wrap: wrap;
@@ -11,7 +12,8 @@
 
 #user_list {
   /*background-color: lightgray; */
-  width: 500px; 
+  width: 100%;
+  /*width: 500px; */
   height: 200px; 
   border: 2px solid black; 
   /*word-wrap: wrap;*/
@@ -21,7 +23,8 @@
 
 #game_list {
   /*background-color: lightpink; */
-  width: 500px; 
+  width: 100%;
+  /*width: 500px; */
   height: 150px; 
   border: 2px solid black; 
   /*word-wrap: wrap;*/
@@ -43,7 +46,7 @@
   border: 2px solid black;
 }*/
 
-.box {
+/*.box {
   position:absolute;
   width: 200px;
   height: 80px;
@@ -53,8 +56,8 @@
   color: white;
   border-radius:10px;
   border: 2px solid black;
-}
+}*/
 
 #message {
-  width: 375px;
+  width: 75%;
 }
