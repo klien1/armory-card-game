@@ -10,9 +10,73 @@
 {% endblock head %}
 
 {% block body %}
-<div class="container col-md-8" id="board">  
-  <div id="play-field">  
-    <div class="col-md-12" id="player2-front-zone">
+<div class="container col-md-4" id="board">  
+  <div id="play-field">
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+    </div>
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+    </div>
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+    </div>
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+    </div>
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+      <!-- <img class="main-front" src="" alt="player2-front-zone"> -->
+    </div>
+<!--     <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+    </div>
+    <div class="col-md-12">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+      <img class="main-front" src="" alt="player2-front-zone">
+    </div> -->
+
+<!--     <div class="col-md-12" id="player2-front-zone">
       <img class="main-front card" id="p2-character-slot" src="" alt="player2-front-zone">
       <img class="main-front" id="p2-main-slot-1" src="" alt="player2-front-zone">
       <img class="main-front" id="p2-main-slot-2" src="" alt="player2-front-zone">
@@ -54,32 +118,103 @@
       <img class="main-front" id="p1-main-slot-4" src="" alt="player1-front-zone">
       <img class="main-front" id="p1-main-slot-5" src="" alt="player1-front-zone">
       <img class="main-front" id="p1-main-slot-6" src="" alt="player1-front-zone">
-    </div>
+    </div> -->
     <div class="col-md-12">
       <div class="empty"></div>
     </div>
+    <div class=container id="hand">
+      <img class="card movable-card" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
+      <img class="card movable-card" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="c1">
+      <img class="card movable-card" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="c1">
+      <img class="card movable-card" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="c1">
+      <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
+      <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
+      <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
+      <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
+    </div>
   </div>  
-  <div class=container id="hand">
-    <img class="card movable-card" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="c1">
-    <img class="card movable-card" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="c1">
-    <img class="card movable-card" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="c1">
-    <img class="card movable-card" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="c1">
-    <img class="card movable-card" src="{% static "cards/Archer/Dodge.jpg"%}" alt="c1">
-    <img class="card movable-card" src="{% static "cards/Archer/Disarm.jpg"%}" alt="c1">
-    <img class="card movable-card" src="{% static "cards/Archer/LoadUp.jpg"%}" alt="c1">
-    <img class="card movable-card" src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1">
+</div>
+<div class="container col-md-5">
+  <div id="boss-stats">
+    <h1>Boss Stats</h1>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Username</th>
+          <th>Class</th>
+          <th>Health</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>Thornton</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td colspan="2">Larry the Bird</td>
+          <td>@twi10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div id="player-stats">
+    <h2>Player Stats</h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>P#</th>
+          <th>Username</th>
+          <th>Class</th>
+          <th>Health</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Archer</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>Warrior</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>West</td>
+          <td>Mage</td>
+          <td>10</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
+<!-- <div class="container col-md-4" style="background-color: black; height: 100%;"> -->
+  <!-- <img id='supersize' src='{% static "cards/Archer/Archer.jpg"%}' style='width: 20%; height: 20%; float:right; margin-top:2em; margin-right:1em' alt='superimage'> -->
+<!-- </div> -->
 <!-- <div class="container col-md-4" style="background-color: lightblue;">
   test
 </div>   -->
 <div class="container" id="pick-class">
   <h2 class="col-md-12 text-center" id="pick-class-title">Choose a Deck</h2>
   <div id="pick-class-images" class="text-center">
-    <img class="start-class" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="Archer">
-    <img class="start-class" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="Cleric">
-    <img class="start-class" id="Mage" src="{% static "cards/Mage/Mage.jpg"%}" alt="Mage">
-    <img class="start-class" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="Warrior">
+    <img class="start-class" id="archer-class" src="{% static "cards/Archer/Archer.jpg"%}" alt="Archer">
+    <img class="start-class" id="cleric-class" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="Cleric">
+    <img class="start-class" id="mage-class" src="{% static "cards/Mage/Mage.jpg"%}" alt="Mage">
+    <img class="start-class" id="warrior-class" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="Warrior">
   </div>
 </div>
 <!-- <div id="test" class="Archer"></div> -->
@@ -104,6 +239,7 @@ document.getElementById("card1").clientHeight
     <!-- <div class="card"><img src="{% static "cards/Archer/Longbow.jpg"%}" alt="c1"></div> -->
 <!--   </div>
 </div> -->
+  <img id='supersize' src='' alt='superimage'>
 
 {% endblock body %}
 

@@ -3,6 +3,11 @@
   padding: 0;
 }
 
+html, body {
+  /*height: 100%;*/
+  /*width: 100%;*/
+}
+
 #board {
   position: relative;
 }
@@ -64,10 +69,10 @@
 img {
   /*width: auto;*/
   /*height: auto;*/
-  width: 98px;
-  height: 138px;
-  /*width: 7%;*/
-  /*height: 7%;*/
+  /*width: 98px;*/
+  /*height: 138px;*/
+  width: 7%;
+  height: 7%;
 }
 
 /*#bottomRight {
@@ -79,11 +84,13 @@ img {
 .main-front, .enemy-zone {
   display: block;
   /*margin: 0 auto;*/
-  margin: 1em 1em;
+  /*margin: .2em .2em;*/
   float: left;
   background-color: yellow;
-  width: 98px;
-  height: 138px;
+  /*width: 98px;*/
+  /*height: 138px;*/
+  width: 80px;
+  height: 111px;
   border: 2px solid black;
 }
 
@@ -138,7 +145,31 @@ img {
   display: block;
   margin-left: 2em;
   float: left;
-  width: 98px;
-  height: 138px;
+  /*width: 98px;*/
+  /*height: 138px;*/
+  width: 80px;
+  height: 111px;
   border: 2px solid white;
 } 
+
+#supersize {
+  width: 20%; 
+  height: 20%; 
+  float:right; 
+  margin-top:2em; 
+  margin-right:1em;
+  visibility: hidden;
+}
+
+#boss-stats {
+  margin-top: 2em; 
+  /*height: 50%;*/
+  /*background-color: black;*/
+  border: solid black 2px;
+}
+
+#player-stats {
+  /*height: 50%;*/
+  /*background-color: blue;*/
+  border: solid black 2px;
+}

@@ -6,14 +6,15 @@ $(() => {
     let index = localpath.search('/static/');
     let path = localpath.substr(index);
 
-    $('body').append("<img id='supersize' src='" + path + 
-      "' style='width: 20%; height: 20%; float:right; margin-top:2em; margin-right:1em'" +
-      " alt='superimage'>");
+    $('#supersize').attr('src', path);
+    $('#supersize').css('visibility', 'visible');
   });
 
   // delete super image
   $('.card').on('mouseleave', () => {
-      $('#supersize').remove();
+    // $('#supersize').attr('src', '');
+    $('#supersize').css('visibility', 'hidden');
+      // $('#supersize').remove();
   });
 
   function display(pic) {
@@ -31,6 +32,7 @@ $(() => {
     accept: allowedTarget,
     drop: onTarget,
     out: offTarget,
+    tolerance: 'pointer'
   });
 
   function allowedTarget(target) {
@@ -64,10 +66,6 @@ $(() => {
     }
   );
 
-  $('.start-class').on('click', (picked) => {
-    console.log(picked.target.id);
-    $("#board").show();
-    $('#pick-class').hide();
-  });
-
+  // console.log(document.getElementById('mage').clientWidth);
+  // console.log(document.getElementById('mage').clientHeight);
 });

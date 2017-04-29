@@ -89,6 +89,13 @@ def ws_disconnect(message):
 def ws_connect_game(message, room_id):
   message.reply_channel.send({"accept": True})
 
+  '''
+  GET PLAYER COUNT AS PLAYERS ENTER
+  FIRST ONE IS PLAYER ONE
+  SECOND ONE IS PLAYER TWO
+  GET NUMBER BY READING NUMBER OF PLAYERS IN DATABASE
+  '''
+
   Group("game-%s" % room_id).add(message.reply_channel)
   Group("%s" % message.user.username).add(message.reply_channel)
 
@@ -114,6 +121,17 @@ def ws_connect_game(message, room_id):
 
 @channel_session_user
 def ws_message_game(message, room_id):
+
+  action = json.loads(message.content['text'])
+
+  if action.get('picked-starter-class') is not None:
+    hero = action.get('picked-starter-class')
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "initialize_deck": hero,
+      })
+    })
+
   # game_room = Game_instance.objects.get(id=room_id)
   # message = "No Message"
   # if game_room is not None:
@@ -131,7 +149,7 @@ def ws_message_game(message, room_id):
   Group("game-%s" % room_id).send({
     "text": json.dumps({
       # "test": data['sending'],
-      "test": message,
+      # "test": message,
       # "num_users_online": num_users_online,
     })
   })
