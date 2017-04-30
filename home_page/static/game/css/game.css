@@ -138,6 +138,10 @@ img {
 /*}*/
 
 #board {
+  margin-top: 2em;
+}
+
+#board, #stats {
   display: none;
 }
 
@@ -148,7 +152,8 @@ img {
   /*width: 98px;*/
   /*height: 138px;*/
   width: 80px;
-  height: 111px;
+  /*height: 111px;*/
+  height: 130px;
   border: 2px solid white;
 } 
 

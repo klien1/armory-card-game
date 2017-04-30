@@ -134,7 +134,7 @@
     </div>
   </div>  
 </div>
-<div class="container col-md-5">
+<div class="container col-md-4" id="stats">
   <div id="boss-stats">
     <h1>Boss Stats</h1>
     <table class="table table-hover">
@@ -146,7 +146,7 @@
           <th>Health</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="boss-stats-body">
         <tr>
           <th scope="row">1</th>
           <td>Mark</td>
@@ -169,17 +169,17 @@
   </div>
   <br>
   <div id="player-stats">
-    <h2>Player Stats</h2>
+    <h1>Player Stats</h1>
     <table class="table table-hover">
       <thead>
         <tr>
           <th>P#</th>
-          <th>Username</th>
+          <th>User</th>
           <th>Class</th>
           <th>Health</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="player-stats-body">
         <tr>
           <th scope="row">1</th>
           <td>Mark</td>
@@ -196,6 +196,12 @@
           <th scope="row">3</th>
           <td>West</td>
           <td>Mage</td>
+          <td>10</td>
+        </tr>
+        <tr class="danger">
+          <th scope="row">4</th>
+          <td>West</td>
+          <td>Cleric</td>
           <td>10</td>
         </tr>
       </tbody>

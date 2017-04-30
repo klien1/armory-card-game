@@ -37,6 +37,7 @@ $(() => {
 
     console.log(picked.target.id);
     $("#board").show();
+    $("#stats").show();
     $('#pick-class').hide();
   });
 });

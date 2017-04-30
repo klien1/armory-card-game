@@ -10,7 +10,9 @@ daphne==1.2.0
 Django==1.11
 incremental==16.10.1
 msgpack-python==0.4.8
+olefile==0.44
 packaging==16.8
+Pillow==4.1.1
 pyparsing==2.2.0
 pytz==2017.2
 redis==2.10.5

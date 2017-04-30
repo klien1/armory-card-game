@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
 from .forms import Game_instance_form
-from .models import Game_instance
+from .models import Game_instance, Card
 
 
 # Create your views here.
@@ -30,10 +30,13 @@ def lobby(request):
   else:
     game_form = Game_instance_form()
 
+  cards = Card.objects.all().filter(hero__hero_class='Warrior')
+
   context = {
     'title': 'Lobby',
     'form': game_form,
     'current_user': request.user,
+    'card': cards,
   }
 
   return render(request, 'lobby/lobby.html', context)
