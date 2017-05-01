@@ -30,13 +30,15 @@ def lobby(request):
   else:
     game_form = Game_instance_form()
 
-  cards = Card.objects.all().filter(hero__hero_class='Warrior')
+  # cards = Card.objects.all().filter(hero__hero_class='Archer')
+  # double __ for references in fk
+  # cards = Card.objects.all().filter(hero__hero_class='Archer', card_type='Hero')
 
   context = {
     'title': 'Lobby',
     'form': game_form,
     'current_user': request.user,
-    'card': cards,
+    # 'card': cards,
   }
 
   return render(request, 'lobby/lobby.html', context)
@@ -44,7 +46,10 @@ def lobby(request):
 
 @login_required(login_url='/login/')
 def game(request, room_id):
-  return render(request, 'game/game.html')
+  context = {
+    'title': room_id
+  }
+  return render(request, 'game/game.html', context)
 
 
 def log_in(request):

@@ -1,20 +1,18 @@
 // document.ready()
 $(() => {
-  // create super image on mouse over
+  // show super image on mouse over
   $('.card').on('mouseenter', (currentImg) => {
     let localpath = currentImg.target.src;
-    let index = localpath.search('/static/');
-    let path = localpath.substr(index);
-
-    $('#supersize').attr('src', path);
-    $('#supersize').css('visibility', 'visible');
+    // console.log(localpath.search('media_files/'))
+    if (localpath.search('media_files/') > 0) {
+      $('#supersize').attr('src', localpath);
+      $('#supersize').css('visibility', 'visible');
+    }
   });
 
-  // delete super image
+  // hide super image
   $('.card').on('mouseleave', () => {
-    // $('#supersize').attr('src', '');
     $('#supersize').css('visibility', 'hidden');
-      // $('#supersize').remove();
   });
 
   function display(pic) {

@@ -1,6 +1,7 @@
+from django.core import serializers
 from channels import Group
 from channels.auth import channel_session_user, channel_session_user_from_http
-from .models import Game_instance, Users_in_lobby
+from .models import Game_instance, Users_in_lobby, Card
 import json
 
 
@@ -119,6 +120,8 @@ def ws_connect_game(message, room_id):
 
 
 
+
+
 @channel_session_user
 def ws_message_game(message, room_id):
 
@@ -126,9 +129,11 @@ def ws_message_game(message, room_id):
 
   if action.get('picked-starter-class') is not None:
     hero = action.get('picked-starter-class')
+    cards = serializers.serialize("json", Card.objects.filter(hero__hero_class=hero))
+
     Group("game-%s" % room_id).send({
       "text": json.dumps({
-        "initialize_deck": hero,
+        "initialize_deck": cards,
       })
     })
 

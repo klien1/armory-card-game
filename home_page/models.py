@@ -48,6 +48,7 @@ def upload_path(instance, filename):
 class Card(models.Model):
   name = models.CharField(max_length=50, unique=True)
   image = models.ImageField(upload_to=upload_path)
+  copies = models.PositiveSmallIntegerField(default=1)
   CARD_TYPES = (
       ('Hero', 'Hero'),
       ('Ability', 'Ability'),
