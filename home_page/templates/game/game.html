@@ -7,23 +7,26 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static "game/css/game.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.7-dist/css/bootstrap-theme.min.css"%}">
 {% endblock head %}
 
 {% block body %}
+
 <div class="col-md-3" id="stats">
   <div id="boss-stats">
-    <h1>Boss Stats</h1>
+    <!-- <h1>Boss Stats</h1> -->
+    <h1 class="text-center" id="player-stats-title"><strong>Skeleton King</strong></h1>
     <table class="table table-hover">
       <thead>
-        <tr>
+<!--         <tr>
           <th>#</th>
           <th>Username</th>
           <th>Class</th>
           <th>Health</th>
-        </tr>
+        </tr> -->
       </thead>
       <tbody id="boss-stats-body">
-        <tr>
+<!--         <tr>
           <th scope="row">1</th>
           <td>Mark</td>
           <td>Otto</td>
@@ -39,24 +42,28 @@
           <th scope="row">3</th>
           <td colspan="2">Larry the Bird</td>
           <td>@twi10</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>
   <br>
   <div id="player-stats">
-    <h1>Player Stats</h1>
+    <!-- <h1>Player Stats</h1> -->
+    <h1 class="text-center" id="player-stats-title"><strong>Player Info</strong></h1>
     <table class="table table-hover">
       <thead>
         <tr>
-          <th>P#</th>
+          <!-- <th>P#</th> -->
           <th>User</th>
           <th>Class</th>
-          <th>Health</th>
+          <th>Hp</th>
+          <th>Def</th>
+          <th>Dmg</th>
+          <th>Range</th>
         </tr>
       </thead>
       <tbody id="player-stats-body">
-        <tr>
+<!--         <tr>
           <th scope="row">1</th>
           <td>Mark</td>
           <td>Archer</td>
@@ -79,66 +86,73 @@
           <td>West</td>
           <td>Cleric</td>
           <td>10</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
+  </div>
+  <div id="current-player-buffs">
+    <h1 class="text-center" id="current-player-buffs-title"><strong>Buffs</strong></h1>
+    
   </div>
 </div>
 <div class="col-md-6" id="board">  
   <div id="play-field">
-    <div class="col-md-12">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
+    <div class="col-md-11 col-row">
+      <img class="board-tile card" id="tile-04" src="" alt="">
+      <img class="board-tile card" id="tile-14" src="" alt="">
+      <img class="board-tile card" id="tile-24" src="" alt="">
+      <img class="board-tile card" id="tile-34" src="" alt="">
+      <img class="board-tile card" id="tile-44" src="" alt="">
+      <img class="board-tile card" id="tile-54" src="" alt="">
+      <img class="board-tile card" id="tile-64" src="" alt="">
     </div>
-    <div class="col-md-12">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
+    <div class="col-md-11 col-row">
+      <img class="board-tile card" id="tile-03" src="" alt="">
+      <img class="board-tile card" id="tile-13" src="" alt="">
+      <img class="board-tile card" id="tile-23" src="" alt="">
+      <img class="board-tile card" id="tile-33" src="" alt="">
+      <img class="board-tile card" id="tile-43" src="" alt="">
+      <img class="board-tile card" id="tile-53" src="" alt="">
+      <img class="board-tile card" id="tile-63" src="" alt="">
     </div>
-    <div class="col-md-12">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
+    <div class="col-md-11 col-row">
+      <img class="board-tile card" id="tile-02" src="" alt="">
+      <img class="board-tile card" id="tile-12" src="" alt="">
+      <img class="board-tile card" id="tile-22" src="" alt="">
+      <img class="board-tile card" id="tile-32" src="" alt="">
+      <img class="board-tile card" id="tile-42" src="" alt="">
+      <img class="board-tile card" id="tile-52" src="" alt="">
+      <img class="board-tile card" id="tile-62" src="" alt="">
     </div>
-    <div class="col-md-12">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
+    <div class="col-md-11 col-row">
+      <img class="board-tile card" id="tile-01" src="" alt="">
+      <img class="board-tile card" id="tile-11" src="" alt="">
+      <img class="board-tile card" id="tile-21" src="" alt="">
+      <img class="board-tile card" id="tile-31" src="" alt="">
+      <img class="board-tile card" id="tile-41" src="" alt="">
+      <img class="board-tile card" id="tile-51" src="" alt="">
+      <img class="board-tile card" id="tile-61" src="" alt="">
     </div>
-    <div class="col-md-12">
-      <img class="main-front card" id="p2-start" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front" src="" alt="">
-      <img class="main-front card" src="" alt="">
-      <img class="main-front card" id="p1-start" src="" alt="">
+    <div class="col-md-11 col-row">
+      <!-- <img class="board-tile card" id="p2-start" id="tile-00" src="" alt=""> -->
+      <img class="board-tile card" id="tile-00" src="" alt="">
+      <img class="board-tile card" id="tile-10" src="" alt="">
+      <img class="board-tile card" id="tile-20" src="" alt="">
+      <img class="board-tile card" id="tile-30" src="" alt="">
+      <img class="board-tile card" id="tile-40" src="" alt="">
+      <img class="board-tile card" id="tile-50" src="" alt="">
+      <img class="board-tile card" id="tile-60" src="" alt="">
+      <!-- <img class="board-tile card" id="p1-start" id="tile-00" src="" alt=""> -->
     </div>
-    <div class="col-md-12">
+    <div class="col-md-10">
     <!-- creates extra row for hand -->
       <div class="empty" id="hand-row-placeholder"></div>
     </div>
-    <div class=container id="hand">
+    <div class="col-md-10" id="hand">
       <img class="card pull-left" id="ability-slot" src="" alt="">
       <img class="card pull-left" id="ultimate-slot" src="" alt="">
       <div class="empty" id="empty-hand-placeholder"></div>
+      <!-- <img class="card pull-left movable-card" id="p1-hero" src="" alt=""> -->
       <img class="card" id="hand-slot-4" src="" alt="">
       <img class="card" id="hand-slot-5" src="" alt="">
       <img class="card" id="hand-slot-6" src="" alt="">
@@ -149,7 +163,7 @@
 </div>
 
 <div class="container" id="pick-class">
-  <h2 class="col-md-12 text-center" id="pick-class-title">Choose a Deck</h2>
+  <h2 class="col-md-11 text-center" id="pick-class-title">Choose a Deck</h2>
   <div id="pick-class-images" class="text-center">
     <img class="start-class" id="Archer" src="{% static "cards/Archer/Archer.jpg"%}" alt="Archer">
     <img class="start-class" id="Cleric" src="{% static "cards/Cleric/Cleric.jpg"%}" alt="Cleric">
@@ -157,13 +171,22 @@
     <img class="start-class" id="Warrior" src="{% static "cards/Warrior/Warrior.jpg"%}" alt="Warrior">
   </div>
 </div>
-
+<img class="card pull-left movable-card" id="current-hero" src="" alt="">
 <img id='supersize' src='' alt='superimage'>
 
+<!--   {% for player in players %}
+    <p>{{player.hero_class}}</p>
+    <p>{{player.player_number}}</p>
+    <p>{{player.health}}</p>
+    <p>{{player.armor}}</p>
+    <p>{{player.attack_damage}}</p>
+    <p>{{player.attack_range}}</p>
+  {% endfor %} -->
 {% endblock body %}
 
 {% block scripts %}
   <script src="{% static "jquery/jquery-ui.min.js" %}"></script>
+  <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
   <script src="{% static "game/js/game.socket.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
 {% endblock scripts %}

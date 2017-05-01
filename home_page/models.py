@@ -27,7 +27,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 #   player_three = models.CharField(max_length=150)
 #   player_four = models.CharField(max_length=150)
 
-
+# static table
 class Hero(models.Model):
   hero_class = models.CharField(max_length=50, unique=True)
   hp = models.PositiveSmallIntegerField(default=10)
@@ -77,9 +77,22 @@ class Game_instance(models.Model):
     return self.room_name
 
 
+class Game_player(models.Model):
+  username = models.CharField(max_length=150)
+  player_number = models.PositiveSmallIntegerField()
+  game_instance_id = models.ForeignKey(Game_instance, on_delete=models.CASCADE)
+  hero_class = models.CharField(max_length=50, null=True)
+  health = models.PositiveSmallIntegerField(null=True)
+  armor = models.PositiveSmallIntegerField(null=True)
+  attack_damage = models.PositiveSmallIntegerField(null=True)
+  attack_range = models.PositiveSmallIntegerField(null=True)
+
+  def __str__(self):
+    return '{0} from game room {1}'.format(self.username, self.game_instance_id)
+
+
 class Users_in_lobby(models.Model):
   user = models.CharField(max_length=150);
 
   def __str__(self):
     return self.user
-

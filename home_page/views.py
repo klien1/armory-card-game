@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
 from .forms import Game_instance_form
-from .models import Game_instance, Card
+from .models import Game_instance, Game_player
+# , Card
 
 
 # Create your views here.
@@ -46,8 +47,11 @@ def lobby(request):
 
 @login_required(login_url='/login/')
 def game(request, room_id):
+  game_room = Game_instance.objects.get(id=room_id)
+  players = Game_player.objects.filter(game_instance_id=game_room)
   context = {
-    'title': room_id
+    'title': room_id,
+    'players': players
   }
   return render(request, 'game/game.html', context)
 

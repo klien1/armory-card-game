@@ -5,11 +5,23 @@
 
 #board {
   position: relative;
+  display: inline-block;
 }
 
 #hand {
-  position: absolute; 
+  position: absolute;
+  width: 100%;
+  border-style: none;  
   bottom: 0;
+}
+
+#current-hero {
+  position: absolute;
+  display: none;
+}
+
+#play-field {
+  width: 100%;
 }
 
 .border-green {
@@ -21,10 +33,8 @@ img {
   height: 111px;
 }
 
-.main-front, .enemy-zone {
+.board-tile {
   display: block;
-  /*margin: 0 auto;*/
-  /*margin: .2em .2em;*/
   float: left;
   background-color: goldenrod;
   width: 80px;
@@ -32,25 +42,14 @@ img {
   border: 2px solid black;
 }
 
-.enemy-zone {
-  background-color: red; 
-}
-
 .start-class {
   width: 20%;
   height: 20%;
 }
 
-.Archer {
-  background: url("../../cards/Archer/Archer.jpg") no-repeat center center;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
 #board {
   margin-top: 2em;
+  display: inline-block;
 }
 
 #board, #stats {
@@ -58,12 +57,13 @@ img {
 }
 
 .empty {
-  display: block;
+  display: inline-block;
   /*margin-left: 2em;*/
   float: left;
   /*width: 98px;*/
   /*height: 138px;*/
-  width: 80px;
+  /*width: 80px;*/
+  width: 30px;
   height: 111px;
   border: 1px solid white;
 } 
@@ -71,6 +71,8 @@ img {
 #supersize {
   width: 20%; 
   height: 20%; 
+  /*width: 15%;*/
+  /*height: 15%;*/
   float:right; 
   margin-top:2em; 
   margin-right:1em;
@@ -79,14 +81,11 @@ img {
 
 #boss-stats {
   margin-top: 2em; 
-  /*height: 50%;*/
-  /*background-color: black;*/
   border: solid black 2px;
 }
 
 #player-stats {
-  /*height: 50%;*/
-  /*background-color: blue;*/
+  margin-top: 2em;
   border: solid black 2px;
 }
 
@@ -96,4 +95,11 @@ img {
 
 .active-card {
   border: solid yellow 2px;
+}
+
+#player-stats-title, #boss-stats-title{
+  background-color: black; 
+  color: white; 
+  padding-top: 0; 
+  margin-top: 0;
 }
