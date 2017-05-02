@@ -12,14 +12,7 @@
 
 {% block body %}
 <br><br>
-<!--   <div class="container">
-      <h1>Welcome {{current_user}}</h1>
-  </div>
- -->
-<!--  <br>
-{% for c in card %}
-  {{c.image}}
-{% endfor %} -->
+
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -52,7 +45,7 @@
     <div class="row">    
       <div id="lobby-component" class="col-md-6">
         <h1>Welcome {{current_user}}</h1>
-        <div class="btn-group">
+        <div class="btn-group" id="create-game-room">
           <form class="form-inline" method="post" accept-charset="utf-8">
             {% csrf_token %}
             <p>
@@ -62,16 +55,10 @@
               {{form.room_name}}
               {{form.room_name.errors}}
             </p>
-            <p>
-              <label>              
-                {{form.max_number_of_players.label}}:
-              </label>
-              {{form.max_number_of_players}}
-              {{form.max_number_of_players.errors}}
-            </p>
             <button class="btn btn-info" type="submit">Create Game Room</button>
           </form>
         </div>
+        <div id="invite-game-room"></div>
         <div>
           <h2>Users in Lobby</h2>
           <ul id="user_list" class="list-group"></ul>
@@ -90,6 +77,13 @@
       </div>
     </div>
   </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content" id="invite-modal-content"></div>
+  </div>
+</div>
 {% endblock body %}
 
 {% block scripts %}
@@ -97,24 +91,4 @@
   <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
   <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "lobby/js/lobby.js" %}" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript">
-    console.log($(".list-group-item").text());
-
-    // function toggle_create() {
-    //   $("#create_game").toggle();
-    // }
-    // let test = [];
-    // let i = 0;
-    // {% for user in users_online %}
-    //   test[i] = "{{ user }}";
-    //   i++;
-    // {% endfor %}
-    //   setInterval(() => {
-    //     $("#user_list").empty();
-    //     test.forEach((user) => {
-    //       $("#user_list").append("<li>" + user + "</li>");
-    //       console.log(user);
-    //     }) 
-    //   }, 3000);
-  </script>
 {% endblock scripts %}

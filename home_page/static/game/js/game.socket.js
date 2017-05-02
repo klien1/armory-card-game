@@ -81,6 +81,16 @@ socket.onmessage = (msg) => {
     });
   } // end if action.player_stats
 
+
+  if (action.update_board !== undefined) {
+    // update board needs current player number
+    // if current_player_number == js current player number, ignore move
+    // else update img src to player and that player image.src and remove previous position src
+    // add/rm p#-occupied class
+    // which player number moved
+    // where that player number moved
+  }
+
 }
 
 
@@ -94,7 +104,6 @@ function random_card(array) {
   }
 
   let index = Math.floor(Math.random() * array.length);
-
   // this creates an array of size 1, so need to get index 0
   let card = array.splice(index, 1)[0];
   current_player_discard.push(card);

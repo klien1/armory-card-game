@@ -22,24 +22,21 @@ def how_to_play(request):
 def lobby(request):
   if request.method == 'POST':
     game_form = Game_instance_form(request.POST)
+    print(game_form)
     if (game_form.is_valid()):
       #get room name to search for it in database then redirect
       room_name = game_form.cleaned_data['room_name']
       game_form.save()
       game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
+      print(game_room)
       return HttpResponseRedirect(game_room)
   else:
     game_form = Game_instance_form()
-
-  # cards = Card.objects.all().filter(hero__hero_class='Archer')
-  # double __ for references in fk
-  # cards = Card.objects.all().filter(hero__hero_class='Archer', card_type='Hero')
 
   context = {
     'title': 'Lobby',
     'form': game_form,
     'current_user': request.user,
-    # 'card': cards,
   }
 
   return render(request, 'lobby/lobby.html', context)
@@ -47,11 +44,8 @@ def lobby(request):
 
 @login_required(login_url='/login/')
 def game(request, room_id):
-  game_room = Game_instance.objects.get(id=room_id)
-  players = Game_player.objects.filter(game_instance_id=game_room)
   context = {
     'title': room_id,
-    'players': players
   }
   return render(request, 'game/game.html', context)
 

@@ -5,12 +5,14 @@ from .models import Game_instance, Users_in_lobby, Card, Game_player, Hero
 import json
 
 
-# lobby web sockets
+'''
+Lobby Web Socket
+'''
 @channel_session_user_from_http
 def ws_connect(message):
   message.reply_channel.send({"accept": True})
   Group("lobby").add(message.reply_channel)
-  Group("%s" % message.user.username).add(message.reply_channel)
+  Group("lobby-%s" % message.user.username).add(message.reply_channel)
   Users_in_lobby.objects.get_or_create(user=message.user.username)
   logged_in_users = list(Users_in_lobby.objects.values_list('user', flat=True))
 
@@ -21,6 +23,7 @@ def ws_connect(message):
         "game_rooms": room_list,
       })
   })
+
 
 @channel_session_user
 def ws_message(message):
@@ -34,15 +37,48 @@ def ws_message(message):
       })
     })
 
-  if my_dict.get("to") is not None:
-    Group(my_dict["to"]).send({
+  # need to prevent adding yourself (probably in js to prevent send)
+  if my_dict.get("invite_user") is not None:
+    Group("lobby-%s" % my_dict["invite_user"]["to"]).send({
       "text": json.dumps({
         "invite": {
-          "to": my_dict["to"],
+          "to": my_dict["invite_user"]["to"],
           "from": message.user.username,
+          "room_name": my_dict["invite_user"]["room_name"],
         }
       })
     })
+
+  if my_dict.get("invitation_response") is not None:
+    # print(my_dict.get("invitation_response"))
+    response = my_dict.get("invitation_response");
+    # print(response['response'])
+    if response['response'] == 'accept':
+      # print(response['response'])
+      print(response)
+      Game_instance.objects.create(room_name=response['room_name'])
+      room_id = Game_instance.objects.get(room_name=response['room_name']).id
+      # print(room_id)
+      Group("lobby-%s" % response['sender']).send({
+        "text": json.dumps({
+            "redirect": "/game-%s" % str(room_id) 
+          })
+      })
+      Group("lobby-%s" % message.user.username).send({
+        "text": json.dumps({
+          "redirect": "/game-%s" % str(room_id) 
+          })
+      })      
+      #create game istance here and redirect sender and player to new game
+      print('success!')
+    elif response['response'] == 'reject':
+      Group("lobby-%s" % response['sender']).send({
+        "text": json.dumps({
+            "rejected_invite": "%s rejected your invitation" % message.user.username
+          })
+      })
+    else:
+      print('cancel')
 
   if my_dict.get("message") is not None:
     Group("lobby").send({
@@ -57,19 +93,34 @@ def ws_message(message):
   if my_dict.get("join_game") is not None:
     room_name = my_dict.get("join_game")
     game_room = Game_instance.objects.get(room_name=room_name)
-    if game_room is not None and game_room.number_of_players < game_room.max_number_of_players:
-      path = "/game-" + str(game_room.id)
-      Group("%s" % message.user.username).send({
-        "text": json.dumps({
-            "room_path": path
-          })
-      })
+
+    if game_room is not None:
+      if game_room.number_of_players < game_room.max_number_of_players:
+        Group("lobby-%s" % message.user.username).send({
+          "text": json.dumps({
+              "alert": "Too many users in the room"
+            })
+        })
+      elif Game_player.objects.filter(game_instance_id=game_room).exists():
+        Group("lobby-%s" % message.user.username).send({
+          "text": json.dumps({
+              "alert": "You can only be in this game room with one window"
+            })
+        })        
+      else:
+        path = "/game-" + str(game_room.id)
+        Group("lobby-%s" % message.user.username).send({
+          "text": json.dumps({
+              "room_path": path
+            })
+        })
     else:
-      Group("%s" % message.user.username).send({
+      Group("lobby-%s" % message.user.username).send({
         "text": json.dumps({
-            "alert": "Game is over or too many users in the room"
+            "alert": "Game room does not exist"
           })
       })
+
 
 @channel_session_user
 def ws_disconnect(message):
@@ -83,7 +134,7 @@ def ws_disconnect(message):
     })
   })
   Group("lobby").discard(message.reply_channel)
-  Group("%s" % message.user.username).discard(message.reply_channel)
+  Group("lobby-%s" % message.user.username).discard(message.reply_channel)
 
 
 
@@ -91,16 +142,16 @@ def ws_disconnect(message):
 
 
 
-
-
-
-# game room websockets
+'''
+Game Room Websocket
+'''
 @channel_session_user_from_http
 def ws_connect_game(message, room_id):
   message.reply_channel.send({"accept": True})
 
   Group("game-%s" % room_id).add(message.reply_channel)
-  Group("%s" % message.user.username).add(message.reply_channel)
+  # need to specifig user and game room or will send to same user in multiple rooms
+  Group("game-{0}-{1}".format(room_id, message.user.username)).add(message.reply_channel)
 
   if Game_instance.objects.filter(id=room_id).exists():
     game_room = Game_instance.objects.get(id=room_id)
@@ -113,13 +164,13 @@ def ws_connect_game(message, room_id):
         game_instance_id=game_room
       )
     else:
-      Group("%s" % message.user.username).send({
+      Group("game-{0}-{1}".format(room_id, message.user.username)).send({
         "text": json.dumps({
             "redirect": "/lobby/",
           })
       })
   else:
-    Group("%s" % message.user.username).send({
+    Group("game-{0}-{1}".format(room_id, message.user.username)).send({
       "text": json.dumps({
           "redirect": "/lobby/",
         })
@@ -148,10 +199,10 @@ def ws_message_game(message, room_id):
       attack_range=hero_object.attack_range
     )
 
-    player_stats = serializers.serialize("json", Game_player.objects.filter(game_instance_id=game_room))
+    player_stats = serializers.serialize("json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number'))
     current_player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
 
-    Group("%s" % message.user.username).send({
+    Group("game-{0}-{1}".format(room_id, message.user.username)).send({
       "text": json.dumps({
         "player_number": str(current_player.player_number),
         "initialize_deck": cards,
@@ -176,7 +227,7 @@ def ws_disconnect_game(message, room_id):
 
   Game_player.objects.filter(username=message.user.username, game_instance_id=game_room).delete()
   Group("game-%s" % room_id).discard(message.reply_channel)
-  Group("%s" % message.user.username).discard(message.reply_channel)
+  Group("game-{0}-{1}".format(room_id, message.user.username)).discard(message.reply_channel)
   room_list = list(Game_instance.objects.values_list('room_name', flat=True))
   Group("lobby").send({
     "text": json.dumps({
