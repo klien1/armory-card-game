@@ -2,7 +2,9 @@
 
 let game_room_list = [];
 let inviteCount = 0;
+let current_username;
 
+// code from http://stackoverflow.com/questions/7060750/detect-the-enter-key-in-a-text-input-field
 document.getElementById("message").addEventListener("keydown", (event) => {
   // Enter is pressed
   if (event.keyCode == 13) { 
@@ -17,7 +19,13 @@ let socket = new WebSocket("ws://" + window.location.host + "/lobby/");
 // receive message from server
 socket.onmessage = (msg) => {
   let recv = JSON.parse(msg.data);
-  console.log(recv);
+  // console.log(recv);
+
+  // initialize current user to prevent broadcast to current user
+  if (recv.initialize_username !== undefined) {
+    current_username = recv.initialize_username;
+    // console.log(current_username);
+  }
 
   if (recv.invite !== undefined) {
     $("#invite-game-room").empty();
@@ -28,7 +36,6 @@ socket.onmessage = (msg) => {
         recv.invite.from + "\",\"" + recv.invite.room_name + "\")'>Accept</button>" +
       "<button class='btn btn-danger' onclick='reject(\"" + recv.invite.from + "\")'>Reject</button>");
     $("#invite-game-room").show();
-    // console.log("Hi! " + recv.invite.to + ". You have been invited to play with " + recv.invite.from);
   }
 
   if (recv.redirect !== undefined) {
@@ -46,16 +53,45 @@ socket.onmessage = (msg) => {
   }
 
   if (recv.game_rooms !== undefined) {
+    let game_list = JSON.parse(recv.game_rooms);
     $("#game_list").empty();
-    game_room_list = [];
-    recv.game_rooms.forEach((room_name) => {
-        game_room_list.push(room_name);
-        $("#game_list").append("<li class='list-group-item'>" + room_name + 
-          "<a class='badge badge-default badge-pill'" + 
-          "onclick='check_room(\"" + room_name + "\")'>Join Game</a>" + 
-          "</li>"
-        );
+    game_room_list = []; // need this to keep track of duplicates for invite
+    game_list.forEach((room)=>{
+        game_room_list.push(room.fields.room_name);
+        if (room.fields.number_of_players >= room.fields.max_number_of_players) {
+          $("#game_list").append("<li class='list-group-item'>" + 
+            room.fields.room_name + 
+            // "<a class='badge badge-default badge-pill'>Full</a></li>"
+            "<a class='badge badge-default badge-pill' data-placement='left'" + 
+            " data-toggle='tooltip' title='players in current game / max slots'>" + 
+            room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
+            "</a>"
+          );
+        }
+        else {   
+          $("#game_list").append("<li class='list-group-item'>" + 
+            room.fields.room_name + 
+            "<a class='badge badge-default badge-pill'" + 
+            "onclick='check_room(\"" + room.fields.room_name + "\")'>Join Game</a>" + 
+            "<a class='badge badge-default badge-pill' data-placement='left'" + 
+            " data-toggle='tooltip' title='number of players / max players'>" + 
+            room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
+            "</a>" +
+            "</li>"
+          );
+        }
     });
+    // console.log()
+    // $("#game_list").empty();
+    // game_room_list = [];
+    // recv.game_rooms.forEach((room_name) => {
+    //     game_room_list.push(room_name);
+    //     $("#game_list").append("<li class='list-group-item'>" + room_name + 
+    //       "<a class='badge badge-default badge-pill'" + 
+    //       "onclick='check_room(\"" + room_name + "\")'>Join Game</a>" + 
+    //       "</li>"
+    //     );
+    // });
   }
 
   if (recv.chat !== undefined && recv.chat.message.length !== 0) {
@@ -71,25 +107,17 @@ socket.onmessage = (msg) => {
     // clear user list
     $("#user_list").empty(); 
     recv.user_logging.forEach((users) => {
-        $("#user_list").append("<li class='list-group-item'>" + 
-          users + 
-          // "<a class='badge badge-default badge-pill' onclick='print(\"" + 
-          // users + "\", this)' data-toggle='modal' data-target='#myModal'>Invite</a>" + 
-          "<a class='badge badge-default badge-pill' onclick='modal_form(\"" + 
-          users + "\")' data-toggle='modal' data-target='#myModal'>Invite</a>" + 
-          "</li>");
+        if (current_username === users) {
+          $("#user_list").append("<li class='list-group-item'>" + users + "</li>"); 
+        }
+        else {
+          $("#user_list").append("<li class='list-group-item'>" + users + 
+            "<a class='badge badge-default badge-pill' onclick='modal_form(\"" + 
+            users + "\")' data-toggle='modal' data-target='#myModal'>Invite</a>" + 
+            "</li>");          
+        }
     });
   }
-
-  // if (recv.user_logging_out !== undefined) {
-    // console.log(recv.user_logging_out);
-    // let user = "#user::" + recv.user_logging_out;
-    // console.log($(user).text());
-    // $("#user::" + recv.user_logging_out).remove();
-    // child = document.getElementById('#user::'+recv.user_logging_out);
-    // parent = document.getElementById('user_list');
-    // parent.removeChild(child);
-  // }
 
   if (recv.room_path !== undefined) {
     window.location.href = "http://" + window.location.host + recv.room_path;
@@ -149,11 +177,13 @@ function modal_form(target_user) {
 function check_invite_gameroom(user) {
   game_room_name = document.getElementById('invite-gameroom-name').value;
   if (game_room_list.indexOf(game_room_name) >= 0) {
-    // console.log('game room exists');
     $('#invite-gameroom-errormsg').html('Room name already exists.');
   }
   else if (game_room_name.length <= 0) {
     $('#invite-gameroom-errormsg').html('Please enter a unique room name.');
+  }
+  else if (current_username === user) {
+    $('#invite-gameroom-errormsg').html('Cannot invite yourself to a game.');
   }
   else {
     $('#invite-modal-content').empty();
@@ -175,16 +205,7 @@ function invite(target_user, game_room_name) {
   }
   else {
     alert('already invited someone');
-    // console.log("Already invited someone");
   }
-}
-
-function check_room(room_name) {
-  // console.log(room_name);
-  let data = {
-    "join_game": room_name,
-  }
-  socket.send(JSON.stringify(data));
 }
 
 //from_sender is a string of user that sent invite
@@ -213,3 +234,15 @@ function reject(from_sender) {
   $("#invite-game-room").hide();
   socket.send(JSON.stringify(data));
 }
+
+function check_room(room_name) {
+  let data = {
+    "join_game": room_name,
+  }
+  socket.send(JSON.stringify(data));
+}
+
+// document.ready
+$(() => {
+  $('[data-toggle="tooltip"]').tooltip();
+});

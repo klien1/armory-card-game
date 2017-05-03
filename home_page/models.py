@@ -2,7 +2,7 @@ from django.db import models
 # from django.contrib.auth.models import User
 # from django.contrib.auth.signals import user_logged_in, user_logged_out
 # from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
+# from django.core.validators import MaxValueValidator, MinValueValidator
 # from django.core.validators import MaxValueValidator
 
 # class Game_state(models.Model):
@@ -68,10 +68,19 @@ class Card(models.Model):
 class Game_instance(models.Model):
   room_name = models.CharField(max_length=50, unique=True)
   number_of_players = models.PositiveIntegerField(default=0)
-  max_number_of_players = models.PositiveIntegerField(
-    default=2,  
-    validators=[MaxValueValidator(4), MinValueValidator(2)],
+  max_number_of_players = models.PositiveIntegerField(default=2)
+  STATE = (
+      ('Complete', 'Complete'),
+      ('Ongoing', 'Ongoing'),
   )
+  # game_state = models.CharField(max_length=20, choices=STATE, default='Ongoing')
+
+
+
+  # max_number_of_players = models.PositiveIntegerField(
+    # default=2,  
+    # validators=[MaxValueValidator(4), MinValueValidator(2)],
+  # )
 
   def __str__(self):
     return self.room_name
@@ -87,8 +96,30 @@ class Game_player(models.Model):
   attack_damage = models.PositiveSmallIntegerField(null=True)
   attack_range = models.PositiveSmallIntegerField(null=True)
 
+  turn_player = models.BooleanField(default=False)
+  board_position = models.CharField(max_length=10, default='tile-32')
+
+  # current player (boolean)
+  # position on board (charfield) default = tile-32
+  #
+
   def __str__(self):
     return '{0} from game room {1}'.format(self.username, self.game_instance_id)
+
+
+# class Game_state(models.Model):
+  # game_instance = models.OneToOneField(Game_instance, on_delete=models.CASCADE)
+  # turn_player = ForeignKey(Game_player, on_delete=models.SET_NULL, null=True)
+  # tile_00 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # tile_10 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # tile_20 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # tile_30 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # tile_40 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # tile_50 = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True)
+  # turn_player = models.ForeignKey(Game_player, on_delete=models.CASCADE)
+
+  # def __str__(self):
+    # return "Game-{0} state".format(self.game_instance)
 
 
 class Users_in_lobby(models.Model):

@@ -2,6 +2,9 @@
 let current_player_deck = [];
 let current_player_discard = [];
 let current_player_number;
+let current_player;
+let current_hero;
+let turn_player;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -14,24 +17,38 @@ socket.onmessage = (msg) => {
     window.location.href = "http://" + window.location.host + action.redirect;
   }
 
+  if (action.turn_player !== undefined) {
+    turn_player = action.turn_player;
+  }
+
   if (action.player_number !== undefined) {
-    console.log(action.player_number);
+    // console.log(action.player_number);
     current_player_number = parseInt(action.player_number);
   }
 
+  if (action.player_name !== undefined) {
+    current_player = action.player_name;
+    // console.log(current_player + " just logged into the game.");
+  }
+
+  // NEED TO ADD INITIALIZATION TO BOARD FROM DATABASE FOR PLAYERS THAT JOIN THE GAME LATE
   if (action.initialize_deck !== undefined) {
     let cards = JSON.parse(action.initialize_deck);
     cards.forEach((card) => {
       // console.log(card.fields);
       for (let i = 0; i < card.fields.copies; i++) {
         if (card.fields.card_type === "Hero") { // needs to start on board change later
+          current_hero = card.fields.name;
+          // console.log(current_hero);
           let start_position;
           // console.log('initialize ', current_player_number);
           if (current_player_number === 1) {
             start_position = $('#tile-60').offset();
+            update_board('#tile-60');
           }
           else if (current_player_number === 2) {
             start_position = $('#tile-00').offset();
+            update_board('#tile-00');
           }
           else if (current_player_number === 3) {
             start_position = $('#tile-04').offset();
@@ -39,8 +56,13 @@ socket.onmessage = (msg) => {
           else {
             start_position = $('#tile-64').offset();
           }
-          $('#current-hero').css({top: start_position.top, left: start_position.left});
+          $('#current-hero').css({
+            top: start_position.top, 
+            left: start_position.left,
+            border: '2px solid green'
+          });
           $('#current-hero').attr('src', '/media_files/' + card.fields.image);
+          $('#current-hero').attr('alt', card.fields.name);
           $('#current-hero').attr('alt', card.fields.name);
         }
         else if (card.fields.card_type === "Ability") {
@@ -56,6 +78,8 @@ socket.onmessage = (msg) => {
         }
       }
     });
+
+    //add draw function to replace this later
     let hand_size = 8;
     for (let card_slot = 4; card_slot <= hand_size; card_slot++) {
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card(current_player_deck).image);
@@ -69,7 +93,7 @@ socket.onmessage = (msg) => {
     players_info.forEach((player) => {
       // console.log(player.fields);
       $('#player-stats-body').append(
-        "<tr>" +
+        "<tr id='turn_player_" + player.fields.username + "'>" +
           "<th scope='row'>" + player.fields.username + " </th>" +
           "<td>" + player.fields.hero_class + "</td>" +
           "<td>" + player.fields.health + "</td>" +
@@ -79,10 +103,29 @@ socket.onmessage = (msg) => {
         "</tr>"
       )
     });
+
+    // $('#kevin-1').addClass('info'); //remove after implementing turn player
   } // end if action.player_stats
 
 
   if (action.update_board !== undefined) {
+    // let update_board = JSON.parse(action.update_board);
+    // console.log(current_player);
+    console.log(action.update_board);
+    if (current_player !== action.update_board.user) {
+      // clear previous image
+      $(action.update_board.prev_position).attr('src', '');
+      // add new image to new spot
+      $(action.update_board.new_position).attr('src', action.update_board.image_path)
+      console.log($(action.update_board.new_position));
+      console.log(action.update_board);
+    }
+    // else {
+    //   console.log('is current user')
+    // }
+
+
+    // console.log(action.update_board);
     // update board needs current player number
     // if current_player_number == js current player number, ignore move
     // else update img src to player and that player image.src and remove previous position src
@@ -109,6 +152,16 @@ function random_card(array) {
   current_player_discard.push(card);
   return card;
 
+}
+
+function update_board(tile_id) {
+  let data = {
+    "update_board": {  
+      "tile": tile_id,
+      "hero_image": current_hero
+    }
+  }
+  socket.send(JSON.stringify(data));
 }
 
 // document.ready shorthand
@@ -139,11 +192,15 @@ $('.movable-card').draggable({
   });
 
   function allowedTarget(target) {
+    // if current_player != turn player return true
+    if (current_player == turn_player) {
+      return true;
+    }
 
     // console.log(target)
     // console.log($(this).attr('id'));
     // if (ui.draggable)
-    return true;
+    return false;
   }
 
   function onTarget(event, ui) {
@@ -163,4 +220,6 @@ $('.movable-card').draggable({
     // remove class player#-occupied or username
     ui.draggable.draggable('option', 'revert', true);
   }
+
+  
 });

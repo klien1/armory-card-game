@@ -43,7 +43,7 @@
 
   <div class="container">
     <div class="row">    
-      <div id="lobby-component" class="col-md-6">
+      <div id="lobby-component" class="col-md-5">
         <h1>Welcome {{current_user}}</h1>
         <div class="btn-group" id="create-game-room">
           <form class="form-inline" method="post" accept-charset="utf-8">
@@ -68,13 +68,17 @@
           <ul id="game_list" class="list-group"></ul>
         </div>
       </div>
-      <div id="chat-component pull-right" class="col-md-6"> 
+      <div id="chat-component pull-right" class="col-md-5"> 
         <h2>Chatroom</h2>   
         <div id="chatbox"></div>
         <div id="end-chat"></div>
         <input id="message" type="text" placeholder="enter message">
         <button type="submit" onclick="send_message()" class="btn btn-primary">Send</button>
       </div>
+<!--       <div id="friend-component pull-right" class="col-md-3">
+        <h2>Friends list</h2> 
+        <div id="friend_list"></div>
+      </div> -->
     </div>
   </div>
 

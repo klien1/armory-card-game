@@ -46,14 +46,15 @@
       </tbody>
     </table>
   </div>
+  <div id="boss-spells">
+    <h1 class="text-center"><strong>Boss Spells</strong></h1>
+  </div>
   <br>
   <div id="player-stats">
-    <!-- <h1>Player Stats</h1> -->
     <h1 class="text-center" id="player-stats-title"><strong>Player Info</strong></h1>
     <table class="table table-hover">
       <thead>
         <tr>
-          <!-- <th>P#</th> -->
           <th>User</th>
           <th>Class</th>
           <th>Hp</th>
@@ -161,6 +162,9 @@
     </div>
   </div>  
 </div>
+<button class="pull-right btn btn-danger" id="exit-game-room" onclick="exit_game()">
+  Exit Game Room
+</button>
 
 <div class="container" id="pick-class">
   <h2 class="col-md-11 text-center" id="pick-class-title">Choose a Deck</h2>
@@ -189,4 +193,9 @@
   <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
   <script src="{% static "game/js/game.socket.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "game/js/game.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script>
+  function exit_game() {
+    window.location.replace("{% url "home_page:lobby" %}");
+  }
+  </script>
 {% endblock scripts %}
