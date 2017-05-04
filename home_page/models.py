@@ -51,6 +51,8 @@ class Card(models.Model):
   copies = models.PositiveSmallIntegerField(default=1)
   CARD_TYPES = (
       ('Hero', 'Hero'),
+      ('Boss', 'Boss'),
+      ('Minion', 'Minion'),
       ('Ability', 'Ability'),
       ('Augment', 'Augment'),
       ('Skill', 'Skill'),
@@ -97,14 +99,14 @@ class Game_player(models.Model):
   attack_range = models.PositiveSmallIntegerField(null=True)
 
   turn_player = models.BooleanField(default=False)
-  board_position = models.CharField(max_length=10, default='tile-32')
+  board_position = models.CharField(max_length=10, default='none')
 
   # current player (boolean)
   # position on board (charfield) default = tile-32
   #
 
   def __str__(self):
-    return '{0} from game room {1}'.format(self.username, self.game_instance_id)
+    return 'Game:{1} Player:{0}'.format(self.username, self.game_instance_id)
 
 
 # class Game_state(models.Model):

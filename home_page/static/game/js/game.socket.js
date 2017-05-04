@@ -19,6 +19,11 @@ socket.onmessage = (msg) => {
 
   if (action.turn_player !== undefined) {
     turn_player = action.turn_player;
+    // console.log("current turn player ", turn_player);
+  }
+
+  if (action.change_turn_player !== undefined) {
+    console.log('changing turn player')
   }
 
   if (action.player_number !== undefined) {
@@ -32,6 +37,7 @@ socket.onmessage = (msg) => {
   }
 
   // NEED TO ADD INITIALIZATION TO BOARD FROM DATABASE FOR PLAYERS THAT JOIN THE GAME LATE
+  // probably get do objects.get(room_id, hero_name__isnull=False) <- not empty
   if (action.initialize_deck !== undefined) {
     let cards = JSON.parse(action.initialize_deck);
     cards.forEach((card) => {
@@ -84,6 +90,7 @@ socket.onmessage = (msg) => {
     for (let card_slot = 4; card_slot <= hand_size; card_slot++) {
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card(current_player_deck).image);
     }
+
   } // end if action.initialize_deck
 
 
@@ -91,9 +98,8 @@ socket.onmessage = (msg) => {
     let players_info = JSON.parse(action.player_stats)
     $('#player-stats-body').empty();
     players_info.forEach((player) => {
-      // console.log(player.fields);
       $('#player-stats-body').append(
-        "<tr id='turn_player_" + player.fields.username + "'>" +
+        "<tr id='turn_player_" + player.fields.player_number + "'>" +
           "<th scope='row'>" + player.fields.username + " </th>" +
           "<td>" + player.fields.hero_class + "</td>" +
           "<td>" + player.fields.health + "</td>" +
@@ -104,8 +110,27 @@ socket.onmessage = (msg) => {
       )
     });
 
+    $('#turn_player_1').addClass('info');
+
     // $('#kevin-1').addClass('info'); //remove after implementing turn player
   } // end if action.player_stats
+
+  if (action.boss_stats !== undefined) {
+    //index 0 is boss object
+    boss = JSON.parse(action.boss_stats)[0];
+    $('#boss-stats-body').append(
+      "<tr>" +
+        "<td>" + boss.fields.hp + "</td>" +
+        "<td>" + boss.fields.defense + "</td>" +
+        "<td>" + boss.fields.attack_damage + "</td>" +
+        "<td>" + boss.fields.attack_range + "</td>" +
+      "</tr>"
+    )
+  }
+
+  if (action.boss_position !== undefined) {
+    $(action.boss_position.tile).attr('src', action.boss_position.boss_image_url);
+  }
 
 
   if (action.update_board !== undefined) {
@@ -117,8 +142,8 @@ socket.onmessage = (msg) => {
       $(action.update_board.prev_position).attr('src', '');
       // add new image to new spot
       $(action.update_board.new_position).attr('src', action.update_board.image_path)
-      console.log($(action.update_board.new_position));
-      console.log(action.update_board);
+      // console.log($(action.update_board.new_position));
+      // console.log(action.update_board);
     }
     // else {
     //   console.log('is current user')
@@ -155,6 +180,7 @@ function random_card(array) {
 }
 
 function update_board(tile_id) {
+  // console.log(tile_id);
   let data = {
     "update_board": {  
       "tile": tile_id,
@@ -204,9 +230,11 @@ $('.movable-card').draggable({
   }
 
   function onTarget(event, ui) {
+    // console.log('turn_player');
+    // console.log($(this).attr('id')); // gets id of droppable
+    update_board("#"+$(this).attr('id'));
     // console.log("UI ", ui);
     // console.log($(this));
-    console.log($(this).attr('id')); // gets id of droppable
     ui.draggable.position({ 
       of: $(this), // current successful droppable
       my: 'left top', 

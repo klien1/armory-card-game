@@ -50,6 +50,7 @@ socket.onmessage = (msg) => {
     inviteCount = 0;
     $('#invite-modal-content').empty();
     $('#invite-modal-content').append('<h1>' + recv.rejected_invite + '</h1');
+    $('#myModal').modal('show');
   }
 
   if (recv.game_rooms !== undefined) {
@@ -74,7 +75,7 @@ socket.onmessage = (msg) => {
             "<a class='badge badge-default badge-pill'" + 
             "onclick='check_room(\"" + room.fields.room_name + "\")'>Join Game</a>" + 
             "<a class='badge badge-default badge-pill' data-placement='left'" + 
-            " data-toggle='tooltip' title='number of players / max players'>" + 
+            " data-toggle='tooltip' title='players in current game / max slots'>" + 
             room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
             "</a>" +
             "</li>"
@@ -96,7 +97,9 @@ socket.onmessage = (msg) => {
 
   if (recv.chat !== undefined && recv.chat.message.length !== 0) {
     $("#chatbox").append(
-      "<p><strong>" + recv.chat.username + "</strong>: "  + recv.chat.message + "</p>"
+      "<p style='margin-left: 1em'><strong>" + 
+        recv.chat.username + 
+      "</strong>: "  + recv.chat.message + "</p>"
     );
     $("#chatbox").animate({ 
       scrollTop: $("#chatbox").prop("scrollHeight")
@@ -166,6 +169,11 @@ function modal_form(target_user) {
       "</button>" +
     "</div>"
   );
+
+  // focuses textbox when inviting user
+  $('#myModal').on('shown.bs.modal', () => {
+      $('#invite-gameroom-name').focus();
+  });
 
   $('#invite-gameroom-name').on('keydown', (event) => {
     if (event.keyCode == 13) { 
@@ -244,5 +252,6 @@ function check_room(room_name) {
 
 // document.ready
 $(() => {
+  // allows tooltips to appear
   $('[data-toggle="tooltip"]').tooltip();
 });
