@@ -7,7 +7,7 @@ class Game_instance_form(ModelForm):
   class Meta:
     model = Game_instance
     fields = ['room_name']
-    # fields = ('room_name')
+    # fields = ('room_name',)
     # fields = ('room_name', 'max_number_of_players')
     # labels = {
     #   'max_number_of_players': _('Max players in Room'),

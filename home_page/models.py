@@ -68,13 +68,18 @@ class Card(models.Model):
 
 
 class Game_instance(models.Model):
-  room_name = models.CharField(max_length=50, unique=True)
+  room_name = models.CharField(
+    max_length=50, 
+    unique=True, 
+    error_messages={
+      'unique': 'Room name already exists.'
+    })
   number_of_players = models.PositiveIntegerField(default=0)
   max_number_of_players = models.PositiveIntegerField(default=2)
-  STATE = (
-      ('Complete', 'Complete'),
-      ('Ongoing', 'Ongoing'),
-  )
+  # STATE = (
+      # ('Complete', 'Complete'),
+      # ('Ongoing', 'Ongoing'),
+  # )
   # game_state = models.CharField(max_length=20, choices=STATE, default='Ongoing')
 
 

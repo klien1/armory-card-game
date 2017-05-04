@@ -154,13 +154,21 @@ def ws_connect_game(message, room_id):
       Game_instance.objects.filter(id=room_id).update(number_of_players=num_players)
 
       for player_number in range(game_room.max_number_of_players):
-        try: 
+        # try: 
           # check to see if game room with p1, p2, p3, etc exists
-          Game_player.objects.get(game_instance_id=game_room, player_number=player_number+1)
-        except:
+          # Game_player.objects.get(game_instance_id=game_room, player_number=player_number+1)
+
+        # if player number in current game room does not exist, create it
+        if not Game_player.objects.filter(
+          game_instance_id=game_room, player_number=player_number+1).exists():
+          # print("in loop %s" % a)
+        # except:
           # filters the current game instance
           # then checks to see if the instance has a turn player
-          turn_player_exists = Game_player.objects.filter(game_instance_id=game_room).exclude(turn_player=False)
+        # Game_player.objects.filter(game_instance_id=game_room, player_number__isnull=False)
+
+          turn_player_exists = Game_player.objects.filter(
+            game_instance_id=game_room).exclude(turn_player=False)
           # print(turn_player_exists)
           # if (not turn_player_exists):
           #   print("exists")
@@ -271,7 +279,7 @@ def ws_message_game(message, room_id):
 
   if action.get('update_board') is not None:
     update_board = action.get('update_board')
-    print(update_board)
+    # print(update_board)
     player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
     image = Card.objects.get(name=update_board['hero_image']).image.url
 
