@@ -10,44 +10,28 @@ let socket = new WebSocket("ws://" + window.location.host + window.location.path
 
 
 socket.onmessage = (msg) => {
-  // console.log(JSON.parse(msg.data));
   let action = JSON.parse(msg.data);
 
   if (action.redirect !== undefined) {
     window.location.href = "http://" + window.location.host + action.redirect;
   }
 
-  if (action.turn_player !== undefined) {
-    turn_player = action.turn_player;
-    // console.log("current turn player ", turn_player);
-  }
-
-  if (action.change_turn_player !== undefined) {
-    console.log('changing turn player')
-  }
-
   if (action.player_number !== undefined) {
-    // console.log(action.player_number);
     current_player_number = parseInt(action.player_number);
   }
 
   if (action.player_name !== undefined) {
     current_player = action.player_name;
-    // console.log(current_player + " just logged into the game.");
   }
 
   // NEED TO ADD INITIALIZATION TO BOARD FROM DATABASE FOR PLAYERS THAT JOIN THE GAME LATE
-  // probably get do objects.get(room_id, hero_name__isnull=False) <- not empty
   if (action.initialize_deck !== undefined) {
     let cards = JSON.parse(action.initialize_deck);
     cards.forEach((card) => {
-      // console.log(card.fields);
       for (let i = 0; i < card.fields.copies; i++) {
         if (card.fields.card_type === "Hero") { // needs to start on board change later
           current_hero = card.fields.name;
-          // console.log(current_hero);
           let start_position;
-          // console.log('initialize ', current_player_number);
           if (current_player_number === 1) {
             start_position = $('#tile-60').offset();
             update_board('#tile-60');
@@ -91,6 +75,7 @@ socket.onmessage = (msg) => {
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card(current_player_deck).image);
     }
 
+    $('#turn_player_1').addClass('success'); // have to intialize player one here
   } // end if action.initialize_deck
 
 
@@ -109,15 +94,18 @@ socket.onmessage = (msg) => {
         "</tr>"
       )
     });
-
-    $('#turn_player_1').addClass('info');
-
-    // $('#kevin-1').addClass('info'); //remove after implementing turn player
+    $('#turn_player_1').addClass('success');
   } // end if action.player_stats
 
   if (action.boss_stats !== undefined) {
     //index 0 is boss object
     boss = JSON.parse(action.boss_stats)[0];
+    $('#boss-stats-title').empty();
+    $('#boss-stats-title').append(
+      "<strong>" + boss.fields.hero_class + "</strong>"
+    );
+
+    $('#boss-stats-body').empty();
     $('#boss-stats-body').append(
       "<tr>" +
         "<td>" + boss.fields.hp + "</td>" +
@@ -125,7 +113,7 @@ socket.onmessage = (msg) => {
         "<td>" + boss.fields.attack_damage + "</td>" +
         "<td>" + boss.fields.attack_range + "</td>" +
       "</tr>"
-    )
+    );
   }
 
   if (action.boss_position !== undefined) {
@@ -134,29 +122,24 @@ socket.onmessage = (msg) => {
 
 
   if (action.update_board !== undefined) {
-    // let update_board = JSON.parse(action.update_board);
-    // console.log(current_player);
-    console.log(action.update_board);
     if (current_player !== action.update_board.user) {
       // clear previous image
       $(action.update_board.prev_position).attr('src', '');
-      // add new image to new spot
       $(action.update_board.new_position).attr('src', action.update_board.image_path)
-      // console.log($(action.update_board.new_position));
-      // console.log(action.update_board);
     }
-    // else {
-    //   console.log('is current user')
-    // }
+  }
 
+  if (action.turn_player !== undefined) {
+    turn_player = action.turn_player.username;
+    $('#turn_player_' + action.turn_player.prev_player_number).removeClass('success');
+    $('#turn_player_' + action.turn_player.player_number).addClass('success');
 
-    // console.log(action.update_board);
-    // update board needs current player number
-    // if current_player_number == js current player number, ignore move
-    // else update img src to player and that player image.src and remove previous position src
-    // add/rm p#-occupied class
-    // which player number moved
-    // where that player number moved
+    if (turn_player == current_player) {
+      $('#end-turn-button').addClass('btn-success');
+      $('#end-turn-button').removeClass('btn-info');
+      $("#end-turn-button").attr('disabled', false);
+    }
+
   }
 
 }
@@ -180,11 +163,23 @@ function random_card(array) {
 }
 
 function update_board(tile_id) {
-  // console.log(tile_id);
   let data = {
     "update_board": {  
       "tile": tile_id,
       "hero_image": current_hero
+    }
+  }
+  socket.send(JSON.stringify(data));
+}
+
+function change_player() {
+  $('#end-turn-button').attr('disabled', true);
+  $('#end-turn-button').removeClass('btn-success');
+  $('#end-turn-button').addClass('btn-info');
+
+  let data = {
+    "change_player": {
+      "turn_player": turn_player,
     }
   }
   socket.send(JSON.stringify(data));
@@ -198,7 +193,6 @@ $(() => {
     }
     socket.send(JSON.stringify(data));
 
-    // console.log(picked.target.id);
     $("#board").show();
     $("#stats").show();
     $("#current-hero").show();
@@ -218,23 +212,15 @@ $('.movable-card').draggable({
   });
 
   function allowedTarget(target) {
-    // if current_player != turn player return true
     if (current_player == turn_player) {
       return true;
     }
-
-    // console.log(target)
-    // console.log($(this).attr('id'));
-    // if (ui.draggable)
     return false;
   }
 
   function onTarget(event, ui) {
-    // console.log('turn_player');
     // console.log($(this).attr('id')); // gets id of droppable
     update_board("#"+$(this).attr('id'));
-    // console.log("UI ", ui);
-    // console.log($(this));
     ui.draggable.position({ 
       of: $(this), // current successful droppable
       my: 'left top', 
@@ -244,8 +230,6 @@ $('.movable-card').draggable({
   }
 
   function offTarget(event, ui) {
-    // console.log('offTarget ',$(this).attr('id'));
-    // remove class player#-occupied or username
     ui.draggable.draggable('option', 'revert', true);
   }
 

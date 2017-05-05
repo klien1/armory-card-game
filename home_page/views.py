@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 
 from .forms import Game_instance_form
 from .models import Game_instance, Game_player, Card
-# , Card
 
 
 # Create your views here.
@@ -22,13 +21,11 @@ def how_to_play(request):
 def lobby(request):
   if request.method == 'POST':
     game_form = Game_instance_form(request.POST)
-    # print(game_form)
     if (game_form.is_valid()):
       #get room name to search for it in database then redirect
       room_name = game_form.cleaned_data['room_name']
       game_form.save()
       game_room = '/game-' + str(Game_instance.objects.get(room_name=room_name).id) + '/'
-      # print(game_room)
       return HttpResponseRedirect(game_room)
   else:
     game_form = Game_instance_form()
@@ -43,7 +40,6 @@ def lobby(request):
 
 
 @login_required(login_url='/login/')
-
 def game(request, room_id):
   heroes = Card.objects.filter(card_type='Hero')
   current_room = Game_instance.objects.filter(id=room_id)

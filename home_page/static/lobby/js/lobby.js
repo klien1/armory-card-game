@@ -18,13 +18,12 @@ let socket = new WebSocket("ws://" + window.location.host + "/lobby/");
 
 // receive message from server
 socket.onmessage = (msg) => {
+  // console.log(msg);
   let recv = JSON.parse(msg.data);
-  // console.log(recv);
 
   // initialize current user to prevent broadcast to current user
   if (recv.initialize_username !== undefined) {
     current_username = recv.initialize_username;
-    // console.log(current_username);
   }
 
   if (recv.invite !== undefined) {
@@ -62,7 +61,6 @@ socket.onmessage = (msg) => {
         if (room.fields.number_of_players >= room.fields.max_number_of_players) {
           $("#game_list").append("<li class='list-group-item'>" + 
             room.fields.room_name + 
-            // "<a class='badge badge-default badge-pill'>Full</a></li>"
             "<a class='badge badge-default badge-pill' data-placement='left'" + 
             " data-toggle='tooltip' title='players in current game / max slots'>" + 
             room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
@@ -82,17 +80,6 @@ socket.onmessage = (msg) => {
           );
         }
     });
-    // console.log()
-    // $("#game_list").empty();
-    // game_room_list = [];
-    // recv.game_rooms.forEach((room_name) => {
-    //     game_room_list.push(room_name);
-    //     $("#game_list").append("<li class='list-group-item'>" + room_name + 
-    //       "<a class='badge badge-default badge-pill'" + 
-    //       "onclick='check_room(\"" + room_name + "\")'>Join Game</a>" + 
-    //       "</li>"
-    //     );
-    // });
   }
 
   if (recv.chat !== undefined && recv.chat.message.length !== 0) {

@@ -144,7 +144,7 @@ def ws_connect_game(message, room_id):
   message.reply_channel.send({"accept": True})
 
   Group("game-%s" % room_id).add(message.reply_channel)
-  # need to specific user and game room or will send to same user in multiple rooms
+  # need to specify user and game room or will send to same user in multiple rooms
   Group("game-{0}-{1}".format(room_id, message.user.username)).add(message.reply_channel)
 
   if Game_instance.objects.filter(id=room_id).exists():
@@ -154,26 +154,11 @@ def ws_connect_game(message, room_id):
       Game_instance.objects.filter(id=room_id).update(number_of_players=num_players)
 
       for player_number in range(game_room.max_number_of_players):
-        # try: 
-          # check to see if game room with p1, p2, p3, etc exists
-          # Game_player.objects.get(game_instance_id=game_room, player_number=player_number+1)
-
         # if player number in current game room does not exist, create it
         if not Game_player.objects.filter(
           game_instance_id=game_room, player_number=player_number+1).exists():
-          # print("in loop %s" % a)
-        # except:
-          # filters the current game instance
-          # then checks to see if the instance has a turn player
-        # Game_player.objects.filter(game_instance_id=game_room, player_number__isnull=False)
-
           turn_player_exists = Game_player.objects.filter(
             game_instance_id=game_room).exclude(turn_player=False)
-          # print(turn_player_exists)
-          # if (not turn_player_exists):
-          #   print("exists")
-          # else:
-          #   print("DNE")
 
           # checks to see if turn player is number 1 and if a turn player DNE
           # if it both is true then create a player 1 with turn player set to true
@@ -223,19 +208,17 @@ def ws_connect_game(message, room_id):
 def ws_message_game(message, room_id):
 
   action = json.loads(message.content['text'])
+  # declare game_room here because action are specific to game room
   game_room = Game_instance.objects.get(id=room_id)
 
 
   # ADD .get to get the players in the room and their board position and send during initialization
-  # prob add boss with initialization as well.
-  # ADD change turn player implementation
-  # 
   if action.get('picked-starter-class') is not None:
     hero = action.get('picked-starter-class')
     cards = serializers.serialize("json", Card.objects.filter(hero__hero_class=hero))
     
-    #adding rest of field to game_player
     
+    # adding rest of field values to game_player initialized on connect
     game_player = Game_player.objects.filter(username=message.user.username, game_instance_id=game_room)
     hero_object = Hero.objects.get(hero_class=hero)
     game_player.update(
@@ -249,14 +232,13 @@ def ws_message_game(message, room_id):
     player_stats = serializers.serialize(
       "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
     )
-    # print(player_stats)
     boss_stats = serializers.serialize("json", Hero.objects.filter(hero_class='Skeleton King'))
     boss_image_url = Card.objects.get(card_type='Boss', name='Skeleton King').image.url
     current_player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
-    #test turn player remove after test
 
     # has problems joining game without turn_player
-    turn_player = Game_player.objects.get(game_instance_id=game_room, turn_player=True).username
+    # filter game_instance_id=game_room . exclue false, if something exists then there is a turn player
+    turn_player = Game_player.objects.get(game_instance_id=game_room, turn_player=True)
 
     Group("game-{0}-{1}".format(room_id, message.user.username)).send({
       "text": json.dumps({
@@ -264,27 +246,30 @@ def ws_message_game(message, room_id):
         "initialize_deck": cards,
         "boss_position": {
           "boss_image_url": boss_image_url,
-          "tile": "#tile-32"
+          "tile": "#tile-32", #boss start tile
         },
-        "turn_player": turn_player
+        "boss_stats": boss_stats, #boss stats here so updates for current_player only
+        "turn_player": {
+          "username": turn_player.username,
+          "player_number": str(turn_player.player_number),
+          "prev_player_number": 1
+        }
       })
     })
 
     Group("game-%s" % room_id).send({
       "text": json.dumps({
-        "player_stats": player_stats,
-        "boss_stats": boss_stats
+        "player_stats": player_stats
       })
     })
 
   if action.get('update_board') is not None:
     update_board = action.get('update_board')
-    # print(update_board)
     player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
     image = Card.objects.get(name=update_board['hero_image']).image.url
 
     prev_position = player.board_position
-    player.board_position=update_board['tile']
+    player.board_position = update_board['tile']
     player.save()
 
     Group("game-%s" % room_id).send({
@@ -297,24 +282,85 @@ def ws_message_game(message, room_id):
         }
       })
     })
-    # print(player.board_position)
-    # update_board = action.get('update_board')
-    # print(update_board)
 
+  if action.get('change_player') is not None:
+    # there exists are other players besides the turn player
+    current_turn_player = Game_player.objects.filter(
+      game_instance_id=game_room, 
+      username=message.user.username, 
+      turn_player=True
+    ).first()
+    if Game_player.objects.filter(game_instance_id=game_room).exclude(turn_player=True).exists():
+      current_turn_player.turn_player = False
+      current_turn_player.save()
+
+      if current_turn_player.player_number+1 > game_room.number_of_players:
+        reset_turn_player = Game_player.objects.get(game_instance_id=game_room, player_number=1)
+        reset_turn_player.turn_player = True
+        reset_turn_player.save()
+        turn_player = reset_turn_player.username
+        turn_player_number = reset_turn_player.player_number
+      else:
+        next_turn_player = Game_player.objects.get(
+          game_instance_id=game_room, 
+          player_number=current_turn_player.player_number+1
+        )
+        next_turn_player.turn_player = True
+        next_turn_player.save()
+        turn_player = next_turn_player.username
+        turn_player_number = next_turn_player.player_number
+
+    else:
+      turn_player = current_turn_player.username
+      turn_player_number = current_turn_player.player_number
+
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "turn_player": { 
+          "username": turn_player,
+          "player_number": str(turn_player_number),
+          "prev_player_number": str(current_turn_player.player_number)
+        } 
+      })
+    })
 
 
 @channel_session_user
 def ws_disconnect_game(message, room_id):
   game_room = Game_instance.objects.filter(id=room_id)
   num_players = Game_instance.objects.get(id=room_id).number_of_players - 1
-  game_room.update(number_of_players=num_players) 
+
+  game_room.update(number_of_players=num_players)
+
+
+
+  # two cases p1 leaves or turn player leaves
+  # logic for 2 player game
+  # need to change when adding more players
+  player_leaving = Game_player.objects.filter(username=message.user.username, game_instance_id=game_room)
+  player_leaving.delete()
+
+  # if Game_player.objects.filter(
+    # game_instance_id=game_room, 
+    # player_number__gt=player_leaving.first().player_number).exists():
+
+
+  # if player_leaving.first().turn_player == True:
+  #   turn_player_leaving = player_leaving.first()
+  #   turn_player_leaving.player_number
+  
+  # if player_leaving.first().player_number == 1:
+
+
   if num_players < 1:
     game_room.delete()
 
   # NEED TO FIX ERROR HERE WHEN TURN PLAYER LEAVES MID GAME
+  # also need to remove player image on board when leaving the game
   # if turn player exists, search for next available player, if no players then no turn player
   # delete room
-  Game_player.objects.filter(username=message.user.username, game_instance_id=game_room).delete()
+
+  #only one player leaves
 
   # need to update player stats here if player leaves mid game
   player_stats = serializers.serialize(
@@ -328,6 +374,8 @@ def ws_disconnect_game(message, room_id):
 
   Group("game-%s" % room_id).discard(message.reply_channel)
   Group("game-{0}-{1}".format(room_id, message.user.username)).discard(message.reply_channel)
+
+  # update room_list to lobby 
   room_list = serializers.serialize("json", Game_instance.objects.all())
   Group("lobby").send({
     "text": json.dumps({
