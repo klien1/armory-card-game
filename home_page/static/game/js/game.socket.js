@@ -218,7 +218,9 @@ $('.movable-card').draggable({
   function allowedTarget(target) {
     // need to check if target tile is the same as current or won't revert
     target_tile = "#" + $(this).attr('id');
-    if (current_player == turn_player || target_tile == current_tile) {
+    target_tile_src = $(this).attr('src').length;
+    console.log(target_tile_src);
+    if ((current_player == turn_player || target_tile == current_tile) && target_tile_src < 1) {
       return true;
     }
     return false;
