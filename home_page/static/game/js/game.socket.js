@@ -5,6 +5,7 @@ let current_player_number;
 let current_player;
 let current_hero;
 let turn_player;
+let current_tile;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -34,10 +35,12 @@ socket.onmessage = (msg) => {
           let start_position;
           if (current_player_number === 1) {
             start_position = $('#tile-60').offset();
+            current_tile = "#tile-60";
             update_board('#tile-60');
           }
           else if (current_player_number === 2) {
             start_position = $('#tile-00').offset();
+            current_tile = "#tile-00";
             update_board('#tile-00');
           }
           else if (current_player_number === 3) {
@@ -169,6 +172,7 @@ function update_board(tile_id) {
       "hero_image": current_hero
     }
   }
+  current_tile = tile_id;
   socket.send(JSON.stringify(data));
 }
 
@@ -212,7 +216,9 @@ $('.movable-card').draggable({
   });
 
   function allowedTarget(target) {
-    if (current_player == turn_player) {
+    // need to check if target tile is the same as current or won't revert
+    target_tile = "#" + $(this).attr('id');
+    if (current_player == turn_player || target_tile == current_tile) {
       return true;
     }
     return false;
