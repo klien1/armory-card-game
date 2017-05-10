@@ -40,6 +40,7 @@ def ws_connect(message):
 def ws_message(message):
   my_dict = json.loads(message.content['text'])
 
+  # need to add cancel invite
   if my_dict.get("invite_user") is not None:
     Group("lobby-%s" % my_dict["invite_user"]["to"]).send({
       "text": json.dumps({
@@ -236,7 +237,7 @@ def ws_message_game(message, room_id):
     boss_image_url = Card.objects.get(card_type='Boss', name='Skeleton King').image.url
     current_player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
 
-    # has problems joining game without turn_player
+    # need to update current position of players in the game when joining in the middle
     # filter game_instance_id=game_room . exclue false, if something exists then there is a turn player
     turn_player = Game_player.objects.get(game_instance_id=game_room, turn_player=True)
 
@@ -377,17 +378,18 @@ def ws_disconnect_game(message, room_id):
   # logic for 2 player game
   # need to change when adding more players
   player_leaving = Game_player.objects.filter(username=message.user.username, game_instance_id=game_room)
+  board_position = player_leaving.first().board_position
   # player 1 leaving
   if player_leaving.first().player_number == 1:
     player_in_room = Game_player.objects.filter(game_instance_id=game_room).exclude(player_number=1)
-    # there is at least 1 player in room that isn't player 1
+    # there is only 1 player in room that isn't player 1
     if player_in_room.count() == 1:
       player_in_room.update(player_number=1)
 
   # turn player leaving
   if player_leaving.first().turn_player == True:
     player_in_room = Game_player.objects.filter(game_instance_id=game_room).exclude(turn_player=True)
-    # there is at least one player in room that isn't turn player
+    # there is only one player in room that isn't turn player
     if player_in_room.count() == 1:
       player_in_room.update(turn_player=True)
       player_leaving.delete() #need to delete here or .first() will not get the correct player
@@ -412,6 +414,12 @@ def ws_disconnect_game(message, room_id):
   Group("game-%s" % room_id).send({
     "text": json.dumps({
       "player_stats": player_stats,
+      "update_board": {
+        "prev_position": board_position,
+        "new_position": board_position,
+        "image_path": '',
+        "user": message.user.username
+      }
     })
   })
 

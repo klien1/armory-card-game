@@ -4,7 +4,7 @@ let game_room_list = [];
 let inviteCount = 0;
 let current_username;
 
-// code from http://stackoverflow.com/questions/7060750/detect-the-enter-key-in-a-text-input-field
+// code idea from http://stackoverflow.com/questions/7060750/detect-the-enter-key-in-a-text-input-field
 document.getElementById("message").addEventListener("keydown", (event) => {
   // Enter is pressed
   if (event.keyCode == 13) { 
@@ -56,7 +56,7 @@ socket.onmessage = (msg) => {
     let game_list = JSON.parse(recv.game_rooms);
     $("#game_list").empty();
     game_room_list = []; // need this to keep track of duplicates for invite
-    game_list.forEach((room)=>{
+    game_list.forEach((room) => {
         game_room_list.push(room.fields.room_name);
         if (room.fields.number_of_players >= room.fields.max_number_of_players) {
           $("#game_list").append("<li class='list-group-item'>" + 
@@ -138,24 +138,29 @@ function send_message() {
 }
 
 function modal_form(target_user) {
-  $('#invite-modal-content').empty();
-  $('#invite-modal-content').append(
-    "<div class='modal-header'>Inviting " + target_user + " to a game." +
-      "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>" +
-        "<span aria-hidden='true'>&times;</span>" +
-      "</button>" +
-    "</div>" +
-    "<div class='modal-body'>" +
-      "<input type='text' placeholder='Enter game room name' id='invite-gameroom-name'>" +
-      "<p id='invite-gameroom-errormsg'></p>" +
-    "</div>" +
-    "<div class='modal-footer'>" +
-      "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>" +
-      "<button class='btn btn-primary' onclick='check_invite_gameroom(\"" + target_user + "\")'>" +
-        "Send Invite" + 
-      "</button>" +
-    "</div>"
-  );
+    $('#invite-modal-content').empty();
+  if (inviteCount < 1) {  
+    $('#invite-modal-content').append(
+      "<div class='modal-header'>Inviting " + target_user + " to a game." +
+        "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>" +
+          "<span aria-hidden='true'>&times;</span>" +
+        "</button>" +
+      "</div>" +
+      "<div class='modal-body'>" +
+        "<input type='text' placeholder='Enter game room name' id='invite-gameroom-name'>" +
+        "<p id='invite-gameroom-errormsg'></p>" +
+      "</div>" +
+      "<div class='modal-footer'>" +
+        "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>" +
+        "<button class='btn btn-primary' onclick='check_invite_gameroom(\"" + target_user + "\")'>" +
+          "Send Invite" + 
+        "</button>" +
+      "</div>"
+    );
+  }
+  else {
+    $('#invite-modal-content').append('<h1>Already Inviting Someone</h1>');
+  }
 
   // focuses textbox when inviting user
   $('#myModal').on('shown.bs.modal', () => {

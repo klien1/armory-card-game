@@ -80,22 +80,12 @@ socket.onmessage = (msg) => {
     for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
       random_card_object = random_card(current_player_deck);
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
-      // add json object to card slot
+      // add json object to card slot for card logic
       $('#hand-slot-' + card_slot).data('card-info', random_card_object);
     }
 
-    // let test_data = {
-      // 'hello': 'world!',
-    // };
-    // console.log($('#hand-slot-1').data('card-info'));
-    // $('#hand-slot-1').data('card-info', test_data);
-    // console.log($('#hand-slot-1').data('card-info'));
-    // console.log($('#current_hero').data());
-
-    // change logic to if turn player add success
-
-    // has to be turn_player_1 here becuase
-    $('#turn_player_1').addClass('success'); // have to intialize player one here
+    // has to be turn_player_1 here becuase not passing in current turn player during initialization
+    $('#turn_player_1').addClass('success');
   } // end if action.initialize_deck
 
 
@@ -186,9 +176,7 @@ function random_card(array) {
   let index = Math.floor(Math.random() * array.length);
   // this creates an array of size 1, so need to get index 0
   let card = array.splice(index, 1)[0];
-  // console.log(current_player_deck);
   current_player_discard.push(card);
-  // console.log(card);
   return card;
 
 }
@@ -204,6 +192,7 @@ function update_board(tile_id) {
   socket.send(JSON.stringify(data));
 }
 
+// function called when ending turn
 function change_player() {
   $('#end-turn-button').attr('disabled', true);
   $('#end-turn-button').removeClass('btn-success');
@@ -281,9 +270,6 @@ $('.movable-card').draggable({
   $('.playable-from-hand').on('click', function () {
     if (current_player === turn_player) {
       card = $(this).data('card-info');
-      // console.log($(this).data('card-info'));
-      // console.log(card.name);
-      // console.log($(this));
 
       if (card.name === "Shortbow") {
         // console.log("dmg + 2");
@@ -324,6 +310,12 @@ $('.movable-card').draggable({
 
       // deactivate after use
       // need to add revert stats at end of turn
+
+      /* How should i implement until end of turn stats */
+      // maybe don't update database with the data
+      // maybe send original stats with updated stats
+      //    would have to add more fields in the models, don't want to do that.
+      // only send temp stats to players and keep the stats in the database unmodified
       if (card.name === "Snipe" && !($(this).hasClass('cannot-be-used-card'))) {
         $(this).addClass('cannot-be-used-card');
         let dmg = $('#'+current_player+'-attack_range').html() * 2;
