@@ -390,6 +390,7 @@ def ws_disconnect_game(message, room_id):
     # there is at least one player in room that isn't turn player
     if player_in_room.count() == 1:
       player_in_room.update(turn_player=True)
+      player_leaving.delete() #need to delete here or .first() will not get the correct player
       turn_player = Game_player.objects.filter(game_instance_id=game_room, turn_player=True)
       Group("game-%s" % room_id).send({
         "text": json.dumps({
