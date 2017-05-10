@@ -157,19 +157,19 @@ def ws_connect_game(message, room_id):
         # if player number in current game room does not exist, create it
         if not Game_player.objects.filter(
           game_instance_id=game_room, player_number=player_number+1).exists():
-          turn_player_exists = Game_player.objects.filter(
+          turn_player = Game_player.objects.filter(
             game_instance_id=game_room).exclude(turn_player=False)
 
           # checks to see if turn player is number 1 and if a turn player DNE
           # if it both is true then create a player 1 with turn player set to true
           # turn player is starting player
-          if player_number+1 == 1 and not turn_player_exists:
+          if player_number+1 == 1 and not turn_player:
              Game_player.objects.create(
               username=message.user.username, 
               player_number=player_number+1,
               game_instance_id=game_room,
               turn_player=True
-            )           
+            )
           else:
             Game_player.objects.create(
               username=message.user.username,
@@ -324,6 +324,47 @@ def ws_message_game(message, room_id):
       })
     })
 
+  '''
+    card logic begins
+  '''
+  if action.get('update_player_stats') is not None:
+    update_obj = action.get('update_player_stats')
+    '''
+      update_player_stats parameters
+        'target': username
+        'health': #
+        'armor': #
+        'attack_damage': #
+        'attack_range': #
+        'until_end_of_turn': bool,
+        'modification': 'add', 'sub', 'other', 'etc'
+    '''
+    modify_player = Game_player.objects.get(game_instance_id=game_room, username=update_obj['target'])
+    if update_obj.get('modification') == 'add':
+      if update_obj.get('health') is not None:
+        pass
+      if update_obj.get('armor') is not None:
+        pass
+      if update_obj.get('attack_damage') is not None:
+        modify_player.attack_damage += update_obj['attack_damage']
+        # modify_stats.update(attack_damage=update_obj['attack_damage'])
+        pass
+      if update_obj.get('attack_range') is not None:
+        pass
+      # modify_player.update(=update_obj['stat_number'])
+    modify_player.save()
+    player_stats = serializers.serialize(
+      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+    )
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "player_stats": player_stats
+      })
+    })
+    # get current user from current game room
+    # modify stats
+    # send back as broadcast
+
 
 @channel_session_user
 def ws_disconnect_game(message, room_id):
@@ -333,34 +374,35 @@ def ws_disconnect_game(message, room_id):
   game_room.update(number_of_players=num_players)
 
 
-
-  # two cases p1 leaves or turn player leaves
   # logic for 2 player game
   # need to change when adding more players
   player_leaving = Game_player.objects.filter(username=message.user.username, game_instance_id=game_room)
+  # player 1 leaving
+  if player_leaving.first().player_number == 1:
+    player_in_room = Game_player.objects.filter(game_instance_id=game_room).exclude(player_number=1)
+    # there is at least 1 player in room that isn't player 1
+    if player_in_room.count() == 1:
+      player_in_room.update(player_number=1)
+
+  # turn player leaving
+  if player_leaving.first().turn_player == True:
+    player_in_room = Game_player.objects.filter(game_instance_id=game_room).exclude(turn_player=True)
+    # there is at least one player in room that isn't turn player
+    if player_in_room.count() == 1:
+      player_in_room.update(turn_player=True)
+      turn_player = Game_player.objects.filter(game_instance_id=game_room, turn_player=True)
+      Group("game-%s" % room_id).send({
+        "text": json.dumps({
+          "turn_player": { 
+            "username": turn_player.first().username,
+            "player_number": turn_player.first().player_number,
+          } 
+        })
+      })
+
   player_leaving.delete()
-
-  # if Game_player.objects.filter(
-    # game_instance_id=game_room, 
-    # player_number__gt=player_leaving.first().player_number).exists():
-
-
-  # if player_leaving.first().turn_player == True:
-  #   turn_player_leaving = player_leaving.first()
-  #   turn_player_leaving.player_number
-  
-  # if player_leaving.first().player_number == 1:
-
-
   if num_players < 1:
     game_room.delete()
-
-  # NEED TO FIX ERROR HERE WHEN TURN PLAYER LEAVES MID GAME
-  # also need to remove player image on board when leaving the game
-  # if turn player exists, search for next available player, if no players then no turn player
-  # delete room
-
-  #only one player leaves
 
   # need to update player stats here if player leaves mid game
   player_stats = serializers.serialize(

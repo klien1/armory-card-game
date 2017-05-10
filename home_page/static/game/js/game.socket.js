@@ -43,6 +43,7 @@ socket.onmessage = (msg) => {
             current_tile = "#tile-00";
             update_board('#tile-00');
           }
+          // p3 and p4 not fully implemented
           else if (current_player_number === 3) {
             start_position = $('#tile-04').offset();
           }
@@ -61,10 +62,12 @@ socket.onmessage = (msg) => {
         else if (card.fields.card_type === "Ability") {
           $('#ability-slot').attr('src', '/media_files/' + card.fields.image);
           $('#ability-slot').attr('alt', card.fields.name);
+          $('#ability-slot').data('card-info', card.fields);
         }
         else if (card.fields.card_type === "Ultimate") {
           $('#ultimate-slot').attr('src', '/media_files/' + card.fields.image);
           $('#ultimate-slot').attr('alt', card.fields.name);
+          $('#ultimate-slot').data('card-info', card.fields);
         }
         else { 
           current_player_deck.push(card.fields);
@@ -73,11 +76,25 @@ socket.onmessage = (msg) => {
     });
 
     //add draw function to replace this later
-    let hand_size = 8;
-    for (let card_slot = 4; card_slot <= hand_size; card_slot++) {
-      $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card(current_player_deck).image);
+    let hand_size = 5;
+    for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
+      random_card_object = random_card(current_player_deck);
+      $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
+      // add json object to card slot
+      $('#hand-slot-' + card_slot).data('card-info', random_card_object);
     }
 
+    // let test_data = {
+      // 'hello': 'world!',
+    // };
+    // console.log($('#hand-slot-1').data('card-info'));
+    // $('#hand-slot-1').data('card-info', test_data);
+    // console.log($('#hand-slot-1').data('card-info'));
+    // console.log($('#current_hero').data());
+
+    // change logic to if turn player add success
+
+    // has to be turn_player_1 here becuase
     $('#turn_player_1').addClass('success'); // have to intialize player one here
   } // end if action.initialize_deck
 
@@ -90,14 +107,17 @@ socket.onmessage = (msg) => {
         "<tr id='turn_player_" + player.fields.player_number + "'>" +
           "<th scope='row'>" + player.fields.username + " </th>" +
           "<td>" + player.fields.hero_class + "</td>" +
-          "<td>" + player.fields.health + "</td>" +
-          "<td>" + player.fields.armor + "</td>" +
-          "<td>" + player.fields.attack_damage + "</td>" +
-          "<td>" + player.fields.attack_range + "</td>" +
+          "<td id='" + current_player + "-health'>" + player.fields.health + "</td>" +
+          "<td id='" + current_player + "-armor'>" + player.fields.armor + "</td>" +
+          "<td id='" + current_player + "-attack_damage'>" + player.fields.attack_damage + "</td>" +
+          "<td id='" + current_player + "-attack_range'>" + player.fields.attack_range + "</td>" +
         "</tr>"
-      )
+      );
+      if (player.fields.turn_player) {
+        $('#turn_player_' + player.fields.player_number).addClass('success');
+      }
     });
-    $('#turn_player_1').addClass('success');
+    // $('#turn_player_1').addClass('success');
   } // end if action.player_stats
 
   if (action.boss_stats !== undefined) {
@@ -128,19 +148,25 @@ socket.onmessage = (msg) => {
     if (current_player !== action.update_board.user) {
       // clear previous image
       $(action.update_board.prev_position).attr('src', '');
-      $(action.update_board.new_position).attr('src', action.update_board.image_path)
+      $(action.update_board.new_position).attr('src', action.update_board.image_path);
     }
   }
 
+  // need separate block for changing turn player because players can end turn
+  // without modifying stats
   if (action.turn_player !== undefined) {
     turn_player = action.turn_player.username;
-    $('#turn_player_' + action.turn_player.prev_player_number).removeClass('success');
+
+    // if prev player not passed then prev player left game
+    if (action.turn_player.prev_player_number !== undefined) {
+      $('#turn_player_' + action.turn_player.prev_player_number).removeClass('success');
+    }
     $('#turn_player_' + action.turn_player.player_number).addClass('success');
 
     if (turn_player == current_player) {
       $('#end-turn-button').addClass('btn-success');
       $('#end-turn-button').removeClass('btn-info');
-      $("#end-turn-button").attr('disabled', false);
+      $('#end-turn-button').attr('disabled', false);
     }
 
   }
@@ -160,7 +186,9 @@ function random_card(array) {
   let index = Math.floor(Math.random() * array.length);
   // this creates an array of size 1, so need to get index 0
   let card = array.splice(index, 1)[0];
+  // console.log(current_player_deck);
   current_player_discard.push(card);
+  // console.log(card);
   return card;
 
 }
@@ -219,7 +247,7 @@ $('.movable-card').draggable({
     // need to check if target tile is the same as current or won't revert
     target_tile = "#" + $(this).attr('id');
     target_tile_src = $(this).attr('src').length;
-    console.log(target_tile_src);
+    // console.log(target_tile_src);
     if ((current_player == turn_player || target_tile == current_tile) && target_tile_src < 1) {
       return true;
     }
@@ -241,5 +269,74 @@ $('.movable-card').draggable({
     ui.draggable.draggable('option', 'revert', true);
   }
 
-  
+
+
+  /*
+  **  CARD IMPLEMENTATION AND CARD LOGIC
+  **  
+  */
+
+  // playable from hand targets ability, ultimate, and 5 randomly generated cards
+  // can't use anon function for 'this'
+  $('.playable-from-hand').on('click', function () {
+    if (current_player === turn_player) {
+      card = $(this).data('card-info');
+      // console.log($(this).data('card-info'));
+      // console.log(card.name);
+      // console.log($(this));
+
+      if (card.name === "Shortbow") {
+        // console.log("dmg + 2");
+      }
+
+      // need to add revert stats at end of turn
+      if (card.name === "Take Aim" && !($(this).hasClass('active-card'))) {
+        $(this).addClass('active-card'); // prevents abilities from being played over and over
+
+
+        // console.log("+1 dmg until end of turn");
+        // send update player_stats {}
+        // send current hero
+        // send which stat to change
+        // send how to change +/-
+        // sned how much to change
+
+        // figure out a way to handle end of turn abilities
+        // database stats name
+        //    player_stats
+        //        health 
+        //        armor 
+        //        attack_damage 
+        //        attack_range 
+        let update_player_stats = {
+          'update_player_stats': {
+            'target': current_player,
+            // 'health':
+            // 'armor':
+            'attack_damage': 1,
+            'until_end_of_turn': true,
+            'modification': 'add',
+            // 'attack_range':
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
+      } // end take aim
+
+      // deactivate after use
+      // need to add revert stats at end of turn
+      if (card.name === "Snipe" && !($(this).hasClass('cannot-be-used-card'))) {
+        $(this).addClass('cannot-be-used-card');
+        let dmg = $('#'+current_player+'-attack_range').html() * 2;
+        let update_player_stats = {
+          'update_player_stats': {
+            'target': current_player,
+            'attack_damage': dmg,
+            'until_end_of_turn': true, // keep original stats and send original stats with update, on end turn set eq to original stats
+            'modification': 'add',
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
+      } // end snipe
+    }
+  });
 });

@@ -97,6 +97,10 @@ img {
   border: solid yellow 2px;
 }
 
+.cannot-be-used-card {
+  border: solid red 2px;
+}
+
 #player-stats-title, #boss-stats-title{
   background-color: black; 
   color: white; 
