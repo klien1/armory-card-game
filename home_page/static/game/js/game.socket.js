@@ -82,13 +82,14 @@ socket.onmessage = (msg) => {
     });
 
     //add draw function to replace this later
-    hand_size = 5;
-    for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
-      let random_card_object = random_card(current_player_deck);
-      $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
-      // add json object to card slot for card logic
-      $('#hand-slot-' + card_slot).data('card-info', random_card_object);
-    }
+    draw_card(5);
+    // hand_size = 5;
+    // for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
+    //   let random_card_object = random_card();
+    //   $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
+    //   // add json object to card slot for card logic
+    //   $('#hand-slot-' + card_slot).data('card-info', random_card_object);
+    // }
 
     // has to be turn_player_1 here becuase not passing in current turn player during initialization
     $('#turn_player_1').addClass('success');
@@ -177,17 +178,25 @@ socket.onmessage = (msg) => {
 
 // gets random index from deck array and moves it to discard array
 // return the removed element (card object)
-function random_card(array) {
+function random_card() {
   // if deck is empty reshuffle discard into deck and empty discard
-  if (array.length === 0) {
+  // console.log(array.length);
+  // console.log(array);
+  // if (array.length === 0) {
+  // console.log(current_player_deck.length);
+  // console.log(current_player_deck.length === 0);
+  if (current_player_deck.length === 0) {
     current_player_deck = current_player_discard;
+    // array = current_player_discard;
     current_player_discard = [];
+    // console.log('current_player_deck' + current_player_deck);
   }
 
-  let index = Math.floor(Math.random() * array.length);
+  let index = Math.floor(Math.random() * current_player_deck.length);
   // this creates an array of size 1, so need to get index 0
-  let card = array.splice(index, 1)[0];
-  current_player_discard.push(card);
+  let card = current_player_deck.splice(index, 1)[0];
+  // current_player_discard.push(card);
+  // console.log(current_player_discard);
   return card;
 }
 
@@ -195,7 +204,7 @@ function draw_card(max_hand_size) {
   while (hand_size < max_hand_size) {
     card_count++;
     hand_size++;
-    let random_card_object = random_card(current_player_deck);
+    let random_card_object = random_card();
     $('#hand').append(
       '<img class="card playable-from-hand" id="new-card-' + card_count + '" src="/media_files/' 
       + random_card_object.image + '" alt="">'
@@ -293,10 +302,10 @@ $('.movable-card').draggable({
 
   // playable from hand targets ability, ultimate, and 5 randomly generated cards
   // can't use anon function for 'this'
-  $('.playable-from-hand').on('click', function () {
+  $(document.body).on('click', '.playable-from-hand', function () {
     if (current_player === turn_player) { // only allow actions for turn player
       card = $(this).data('card-info'); // card obj attached to html
-      console.log(card);
+      // console.log(card);
 
       if (card.name === 'Take Aim' && !($(this).hasClass('active-card'))) {
         $(this).addClass('active-card'); // prevents abilities from being played more than once per turn
@@ -343,6 +352,8 @@ $('.movable-card').draggable({
       if (!(card.type === "Ability" && card_type === "Ultimate")) {      
         $(this).remove();
         hand_size--;
+        current_player_discard.push(card);
+        // console.log(current_player_discard);
       }
 
     //   if (card.name === "Shortbow") {
