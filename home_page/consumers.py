@@ -414,8 +414,8 @@ def ws_message_game(message, room_id):
       # always require a target
       modify_player = Game_player.objects.get(game_instance_id=game_room, username=alter_obj['target'])
       stat = alter_obj['stat_to_modify']
+      # get variable attribute then add the modify amount and save to database
       new_stat = getattr(modify_player, stat) + alter_obj['stat_to_modify_amount']
-      # print(new_stat)
       setattr(modify_player, stat, new_stat)
       modify_player.save()
     Group('game-%s' % room_id).send({
@@ -424,7 +424,6 @@ def ws_message_game(message, room_id):
           'target': alter_obj['target'],
           'stat_to_modify': alter_obj['stat_to_modify'],
           'stat_to_modify_amount': alter_obj['stat_to_modify_amount'],
-          # 'modification': alter_obj['modification']
         }
       })
     })    

@@ -1,7 +1,7 @@
 // document.ready()
 $(() => {
   // show super image on mouse over
-  $('.card').on('mouseenter', (currentImg) => {
+  $(document.body).on('mouseenter', '.card', (currentImg) => {
     let localpath = currentImg.target.src;
     if (localpath.search('cards/') > 0) {
       $('#supersize').attr('src', localpath);
@@ -10,7 +10,7 @@ $(() => {
   });
 
   // hide super image
-  $('.card').on('mouseleave', () => {
+  $(document.body).on('mouseleave', '.card', () => {
     $('#supersize').css('visibility', 'hidden');
   });
 

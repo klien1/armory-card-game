@@ -7,6 +7,7 @@ let current_hero;
 let turn_player;
 let current_tile;
 let hand_size = 0;
+let card_count = 0;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -83,7 +84,7 @@ socket.onmessage = (msg) => {
     //add draw function to replace this later
     hand_size = 5;
     for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
-      random_card_object = random_card(current_player_deck);
+      let random_card_object = random_card(current_player_deck);
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
       // add json object to card slot for card logic
       $('#hand-slot-' + card_slot).data('card-info', random_card_object);
@@ -166,7 +167,7 @@ socket.onmessage = (msg) => {
   }
 
   if (action.alter_player_stats !== undefined) {
-    console.log(action.alter_player_stats);
+    // console.log(action.alter_player_stats);
     stat = $('#' + action.alter_player_stats.target + '-' + action.alter_player_stats.stat_to_modify);
     stat.html(parseInt(stat.html()) + action.alter_player_stats.stat_to_modify_amount);
   }
@@ -188,7 +189,19 @@ function random_card(array) {
   let card = array.splice(index, 1)[0];
   current_player_discard.push(card);
   return card;
+}
 
+function draw_card(max_hand_size) {
+  while (hand_size < max_hand_size) {
+    card_count++;
+    hand_size++;
+    let random_card_object = random_card(current_player_deck);
+    $('#hand').append(
+      '<img class="card playable-from-hand" id="new-card-' + card_count + '" src="/media_files/' 
+      + random_card_object.image + '" alt="">'
+    );
+    $('#new-card-' + card_count).data('card-info', random_card_object);
+  }
 }
 
 function update_board(tile_id) {
@@ -216,6 +229,7 @@ function change_player() {
     "refresh_stats": true
   }
   socket.send(JSON.stringify(data));
+  draw_card(5);
 }
 
 // document.ready shorthand
@@ -282,6 +296,7 @@ $('.movable-card').draggable({
   $('.playable-from-hand').on('click', function () {
     if (current_player === turn_player) { // only allow actions for turn player
       card = $(this).data('card-info'); // card obj attached to html
+      console.log(card);
 
       if (card.name === 'Take Aim' && !($(this).hasClass('active-card'))) {
         $(this).addClass('active-card'); // prevents abilities from being played more than once per turn
@@ -291,11 +306,43 @@ $('.movable-card').draggable({
             'target': current_player,
             'stat_to_modify': 'attack_damage',
             'stat_to_modify_amount': take_aim_value,
-            'modification': 'add',
             'until_end_of_turn': true
           }
         };
         socket.send(JSON.stringify(update_player_stats));
+      }
+      else if (card.name == 'Shortbow') {
+        let shortbow_value = 2;
+        let update_player_stats = {
+          'alter_player_stats': {
+            'target': current_player,
+            'stat_to_modify': 'attack_damage',
+            'stat_to_modify_amount': shortbow_value
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
+        $('#current-player-buffs').append(
+          '<img class="card" src="/media_files/'+ card.image +'" alt="' + card.image + '">'
+        );
+      }
+      else if (card.name == 'Longbow') {
+        let longbow_value = 1;
+        let update_player_stats = {
+          'alter_player_stats': {
+            'target': current_player,
+            'stat_to_modify': 'attack_damage',
+            'stat_to_modify_amount': longbow_value
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
+        $('#current-player-buffs').append(
+          '<img class="card" src="/media_files/'+ card.image +'" alt="' + card.image + '">'
+        );
+      }
+
+      if (!(card.type === "Ability" && card_type === "Ultimate")) {      
+        $(this).remove();
+        hand_size--;
       }
 
     //   if (card.name === "Shortbow") {
