@@ -213,6 +213,17 @@ def ws_message_game(message, room_id):
   game_room = Game_instance.objects.get(id=room_id)
 
 
+  if action.get('refresh_stats') is not None:
+    player_stats = serializers.serialize(
+      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+    )    
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "player_stats": player_stats
+      })
+    })
+
+
   # ADD .get to get the players in the room and their board position and send during initialization
   if action.get('picked-starter-class') is not None:
     hero = action.get('picked-starter-class')
@@ -233,6 +244,7 @@ def ws_message_game(message, room_id):
     player_stats = serializers.serialize(
       "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
     )
+    # Currently only have 1 boss, so boss never changes
     boss_stats = serializers.serialize("json", Hero.objects.filter(hero_class='Skeleton King'))
     boss_image_url = Card.objects.get(card_type='Boss', name='Skeleton King').image.url
     current_player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
@@ -348,15 +360,22 @@ def ws_message_game(message, room_id):
         pass
       if update_obj.get('attack_damage') is not None:
         modify_player.attack_damage += update_obj['attack_damage']
+        # modify_player.attack_damage = update_obj['attack_damage']
         # modify_stats.update(attack_damage=update_obj['attack_damage'])
         pass
       if update_obj.get('attack_range') is not None:
         pass
       # modify_player.update(=update_obj['stat_number'])
-    modify_player.save()
+    # if action.get('until_end_of_turn') is not None:
+    # print(modify_player.attack_damage)
+    # modify_player.save()
+    # print(modify_player.attack_damage)
     player_stats = serializers.serialize(
       "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
     )
+
+    print(Game_player.objects.filter(game_instance_id=game_room).order_by('player_number').first().attack_damage)
+    modify_player.save()
     Group("game-%s" % room_id).send({
       "text": json.dumps({
         "player_stats": player_stats
@@ -365,6 +384,50 @@ def ws_message_game(message, room_id):
     # get current user from current game room
     # modify stats
     # send back as broadcast
+
+
+  # redoing altering stats
+
+  '''
+  obj needs
+    target(username)
+    stat(attack_damge, health, etc)
+    stat_num(number to add)
+    until end of turn(bool) #determines whether or not to store stat modification
+    modification(add, sub, multiply)
+      'alter_player_stats': {
+        'target': current_player,
+        'stat_to_modify': 'attack_damage',
+        'stat_to_modify_amount': take_aim_value,
+        'modification': 'add'
+      }
+
+    in js target with jquery and add value
+
+    alter action only receives number to add by
+    send the number that is added to client
+    if until end of turn is true, then don't save to database.
+  '''
+  if action.get('alter_player_stats') is not None:
+    alter_obj = action.get('alter_player_stats')
+    if alter_obj.get('until_end_of_turn') is None:
+      # always require a target
+      modify_player = Game_player.objects.get(game_instance_id=game_room, username=alter_obj['target'])
+      stat = alter_obj['stat_to_modify']
+      new_stat = getattr(modify_player, stat) + alter_obj['stat_to_modify_amount']
+      # print(new_stat)
+      setattr(modify_player, stat, new_stat)
+      modify_player.save()
+    Group('game-%s' % room_id).send({
+      'text': json.dumps({
+        'alter_player_stats': {
+          'target': alter_obj['target'],
+          'stat_to_modify': alter_obj['stat_to_modify'],
+          'stat_to_modify_amount': alter_obj['stat_to_modify_amount'],
+          # 'modification': alter_obj['modification']
+        }
+      })
+    })    
 
 
 @channel_session_user

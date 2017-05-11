@@ -6,6 +6,7 @@ let current_player;
 let current_hero;
 let turn_player;
 let current_tile;
+let hand_size = 0;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -34,20 +35,24 @@ socket.onmessage = (msg) => {
           current_hero = card.fields.name;
           let start_position;
           if (current_player_number === 1) {
+            // bottom left
             start_position = $('#tile-60').offset();
             current_tile = "#tile-60";
             update_board('#tile-60');
           }
           else if (current_player_number === 2) {
+            // bottom right
             start_position = $('#tile-00').offset();
             current_tile = "#tile-00";
             update_board('#tile-00');
           }
           // p3 and p4 not fully implemented
           else if (current_player_number === 3) {
+            // top left
             start_position = $('#tile-04').offset();
           }
           else {
+            // top right
             start_position = $('#tile-64').offset();
           }
           $('#current-hero').css({
@@ -76,7 +81,7 @@ socket.onmessage = (msg) => {
     });
 
     //add draw function to replace this later
-    let hand_size = 5;
+    hand_size = 5;
     for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
       random_card_object = random_card(current_player_deck);
       $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
@@ -158,7 +163,12 @@ socket.onmessage = (msg) => {
       $('#end-turn-button').removeClass('btn-info');
       $('#end-turn-button').attr('disabled', false);
     }
+  }
 
+  if (action.alter_player_stats !== undefined) {
+    console.log(action.alter_player_stats);
+    stat = $('#' + action.alter_player_stats.target + '-' + action.alter_player_stats.stat_to_modify);
+    stat.html(parseInt(stat.html()) + action.alter_player_stats.stat_to_modify_amount);
   }
 
 }
@@ -197,11 +207,13 @@ function change_player() {
   $('#end-turn-button').attr('disabled', true);
   $('#end-turn-button').removeClass('btn-success');
   $('#end-turn-button').addClass('btn-info');
+  $('.active-card').removeClass('active-card');
 
   let data = {
     "change_player": {
       "turn_player": turn_player,
-    }
+    },
+    "refresh_stats": true
   }
   socket.send(JSON.stringify(data));
 }
@@ -236,7 +248,7 @@ $('.movable-card').draggable({
     // need to check if target tile is the same as current or won't revert
     target_tile = "#" + $(this).attr('id');
     target_tile_src = $(this).attr('src').length;
-    // console.log(target_tile_src);
+ 
     if ((current_player == turn_player || target_tile == current_tile) && target_tile_src < 1) {
       return true;
     }
@@ -268,67 +280,85 @@ $('.movable-card').draggable({
   // playable from hand targets ability, ultimate, and 5 randomly generated cards
   // can't use anon function for 'this'
   $('.playable-from-hand').on('click', function () {
-    if (current_player === turn_player) {
-      card = $(this).data('card-info');
+    if (current_player === turn_player) { // only allow actions for turn player
+      card = $(this).data('card-info'); // card obj attached to html
 
-      if (card.name === "Shortbow") {
-        // console.log("dmg + 2");
+      if (card.name === 'Take Aim' && !($(this).hasClass('active-card'))) {
+        $(this).addClass('active-card'); // prevents abilities from being played more than once per turn
+        let take_aim_value = 1;
+        let update_player_stats = {
+          'alter_player_stats': {
+            'target': current_player,
+            'stat_to_modify': 'attack_damage',
+            'stat_to_modify_amount': take_aim_value,
+            'modification': 'add',
+            'until_end_of_turn': true
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
       }
 
-      // need to add revert stats at end of turn
-      if (card.name === "Take Aim" && !($(this).hasClass('active-card'))) {
-        $(this).addClass('active-card'); // prevents abilities from being played over and over
+    //   if (card.name === "Shortbow") {
+    //     // console.log("dmg + 2");
+    //   }
+
+    //   // need to add revert stats at end of turn
+    //   if (card.name === "Take Aim" && !($(this).hasClass('active-card'))) {
+    //     $(this).addClass('active-card'); // prevents abilities from being played over and over
 
 
-        // console.log("+1 dmg until end of turn");
-        // send update player_stats {}
-        // send current hero
-        // send which stat to change
-        // send how to change +/-
-        // sned how much to change
+    //     // console.log("+1 dmg until end of turn");
+    //     // send update player_stats {}
+    //     // send current hero
+    //     // send which stat to change
+    //     // send how to change +/-
+    //     // sned how much to change
 
-        // figure out a way to handle end of turn abilities
-        // database stats name
-        //    player_stats
-        //        health 
-        //        armor 
-        //        attack_damage 
-        //        attack_range 
-        let update_player_stats = {
-          'update_player_stats': {
-            'target': current_player,
-            // 'health':
-            // 'armor':
-            'attack_damage': 1,
-            'until_end_of_turn': true,
-            'modification': 'add',
-            // 'attack_range':
-          }
-        };
-        socket.send(JSON.stringify(update_player_stats));
-      } // end take aim
+    //     // figure out a way to handle end of turn abilities
+    //     // database stats name
+    //     //    player_stats
+    //     //        health 
+    //     //        armor 
+    //     //        attack_damage 
+    //     //        attack_range 
+    //     let dmg = parseInt($('#'+current_player+'-attack_damage').html()) + 1;
+    //     let update_player_stats = {
+    //       'update_player_stats': {
+    //         'target': current_player,
+    //         // 'health':
+    //         // 'armor':=1
+    //         'attack_damage': dmg,
+    //         'until_end_of_turn': true,
+    //         'modification': 'add',
+    //         // 'attack_range':
+    //       }
+    //     };
+    //     socket.send(JSON.stringify(update_player_stats));
+    //   } // end take aim
 
-      // deactivate after use
-      // need to add revert stats at end of turn
+    //   // deactivate after use
+    //   // need to add revert stats at end of turn
 
-      /* How should i implement until end of turn stats */
-      // maybe don't update database with the data
-      // maybe send original stats with updated stats
-      //    would have to add more fields in the models, don't want to do that.
-      // only send temp stats to players and keep the stats in the database unmodified
-      if (card.name === "Snipe" && !($(this).hasClass('cannot-be-used-card'))) {
-        $(this).addClass('cannot-be-used-card');
-        let dmg = $('#'+current_player+'-attack_range').html() * 2;
-        let update_player_stats = {
-          'update_player_stats': {
-            'target': current_player,
-            'attack_damage': dmg,
-            'until_end_of_turn': true, // keep original stats and send original stats with update, on end turn set eq to original stats
-            'modification': 'add',
-          }
-        };
-        socket.send(JSON.stringify(update_player_stats));
-      } // end snipe
-    }
+    //   /* How should i implement until end of turn stats */
+    //   // maybe don't update database with the data
+    //   // maybe send original stats with updated stats
+    //   //    would have to add more fields in the models, don't want to do that.
+    //   // only send temp stats to players and keep the stats in the database unmodified
+    //   // do calc on current stats
+    //   if (card.name === "Snipe" && !($(this).hasClass('cannot-be-used-card'))) {
+    //     $(this).addClass('cannot-be-used-card');
+    //     let dmg = parseInt($('#'+current_player+'-attack_range').html()) 
+    //       * 2 + parseInt($('#'+current_player+'-attack_damage').html());
+    //     let update_player_stats = {
+    //       'update_player_stats': {
+    //         'target': current_player,
+    //         'attack_damage': dmg,
+    //         'until_end_of_turn': true,
+    //         'modification': 'add',
+    //       }
+    //     };
+    //     socket.send(JSON.stringify(update_player_stats));
+    //   } // end snipe
+    } // end if current_player == turn_player
   });
 });
