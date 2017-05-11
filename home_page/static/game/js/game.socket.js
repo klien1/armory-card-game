@@ -104,10 +104,10 @@ socket.onmessage = (msg) => {
         "<tr id='turn_player_" + player.fields.player_number + "'>" +
           "<th scope='row'>" + player.fields.username + " </th>" +
           "<td>" + player.fields.hero_class + "</td>" +
-          "<td id='" + current_player + "-health'>" + player.fields.health + "</td>" +
-          "<td id='" + current_player + "-armor'>" + player.fields.armor + "</td>" +
-          "<td id='" + current_player + "-attack_damage'>" + player.fields.attack_damage + "</td>" +
-          "<td id='" + current_player + "-attack_range'>" + player.fields.attack_range + "</td>" +
+          "<td id='" + player.fields.username + "-health'>" + player.fields.health + "</td>" +
+          "<td id='" + player.fields.username + "-armor'>" + player.fields.armor + "</td>" +
+          "<td id='" + player.fields.username + "-attack_damage'>" + player.fields.attack_damage + "</td>" +
+          "<td id='" + player.fields.username + "-attack_range'>" + player.fields.attack_range + "</td>" +
         "</tr>"
       );
       if (player.fields.turn_player) {
@@ -180,23 +180,14 @@ socket.onmessage = (msg) => {
 // return the removed element (card object)
 function random_card() {
   // if deck is empty reshuffle discard into deck and empty discard
-  // console.log(array.length);
-  // console.log(array);
-  // if (array.length === 0) {
-  // console.log(current_player_deck.length);
-  // console.log(current_player_deck.length === 0);
   if (current_player_deck.length === 0) {
     current_player_deck = current_player_discard;
-    // array = current_player_discard;
     current_player_discard = [];
-    // console.log('current_player_deck' + current_player_deck);
   }
 
   let index = Math.floor(Math.random() * current_player_deck.length);
   // this creates an array of size 1, so need to get index 0
   let card = current_player_deck.splice(index, 1)[0];
-  // current_player_discard.push(card);
-  // console.log(current_player_discard);
   return card;
 }
 
@@ -349,74 +340,11 @@ $('.movable-card').draggable({
         );
       }
 
-      if (!(card.type === "Ability" && card_type === "Ultimate")) {      
+      if (!(card.card_type === "Ability" || card.card_type === "Ultimate")) {      
         $(this).remove();
         hand_size--;
         current_player_discard.push(card);
-        // console.log(current_player_discard);
       }
-
-    //   if (card.name === "Shortbow") {
-    //     // console.log("dmg + 2");
-    //   }
-
-    //   // need to add revert stats at end of turn
-    //   if (card.name === "Take Aim" && !($(this).hasClass('active-card'))) {
-    //     $(this).addClass('active-card'); // prevents abilities from being played over and over
-
-
-    //     // console.log("+1 dmg until end of turn");
-    //     // send update player_stats {}
-    //     // send current hero
-    //     // send which stat to change
-    //     // send how to change +/-
-    //     // sned how much to change
-
-    //     // figure out a way to handle end of turn abilities
-    //     // database stats name
-    //     //    player_stats
-    //     //        health 
-    //     //        armor 
-    //     //        attack_damage 
-    //     //        attack_range 
-    //     let dmg = parseInt($('#'+current_player+'-attack_damage').html()) + 1;
-    //     let update_player_stats = {
-    //       'update_player_stats': {
-    //         'target': current_player,
-    //         // 'health':
-    //         // 'armor':=1
-    //         'attack_damage': dmg,
-    //         'until_end_of_turn': true,
-    //         'modification': 'add',
-    //         // 'attack_range':
-    //       }
-    //     };
-    //     socket.send(JSON.stringify(update_player_stats));
-    //   } // end take aim
-
-    //   // deactivate after use
-    //   // need to add revert stats at end of turn
-
-    //   /* How should i implement until end of turn stats */
-    //   // maybe don't update database with the data
-    //   // maybe send original stats with updated stats
-    //   //    would have to add more fields in the models, don't want to do that.
-    //   // only send temp stats to players and keep the stats in the database unmodified
-    //   // do calc on current stats
-    //   if (card.name === "Snipe" && !($(this).hasClass('cannot-be-used-card'))) {
-    //     $(this).addClass('cannot-be-used-card');
-    //     let dmg = parseInt($('#'+current_player+'-attack_range').html()) 
-    //       * 2 + parseInt($('#'+current_player+'-attack_damage').html());
-    //     let update_player_stats = {
-    //       'update_player_stats': {
-    //         'target': current_player,
-    //         'attack_damage': dmg,
-    //         'until_end_of_turn': true,
-    //         'modification': 'add',
-    //       }
-    //     };
-    //     socket.send(JSON.stringify(update_player_stats));
-    //   } // end snipe
     } // end if current_player == turn_player
   });
 });
