@@ -2,12 +2,14 @@
 let current_player_deck = [];
 let current_player_discard = [];
 let current_player_number;
+let current_start_class;
 let current_player;
 let current_hero;
 let turn_player;
 let current_tile;
 let hand_size = 0;
 let card_count = 0;
+let take_aim_augments = 0;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -27,8 +29,21 @@ socket.onmessage = (msg) => {
     current_player = action.player_name;
   }
 
-  // NEED TO ADD INITIALIZATION TO BOARD FROM DATABASE FOR PLAYERS THAT JOIN THE GAME LATE
+  // reminder update game room status
+  if (action.all_players_ready !== undefined) {
+    $("#board").show();
+    $("#stats").show();
+    $("#current-hero").show();
+    $("#game-title-outside-container").show();
+    $("#pick-class").hide();
+    $("#pick-class-header").hide();
+    $("#user-waiting-div").hide();
+    $("#game-room-user-ready").hide();
+  }
+
+
   if (action.initialize_deck !== undefined) {
+    current_player_deck = [];
     let cards = JSON.parse(action.initialize_deck);
     cards.forEach((card) => {
       for (let i = 0; i < card.fields.copies; i++) {
@@ -81,18 +96,14 @@ socket.onmessage = (msg) => {
       }
     });
 
-    //add draw function to replace this later
+    // draw_card passes in max_hand_size
+    hand_size = 0;
+    $("#random-cards-drawn").empty();
     draw_card(5);
-    // hand_size = 5;
-    // for (let card_slot = 1; card_slot <= hand_size; card_slot++) {
-    //   let random_card_object = random_card();
-    //   $('#hand-slot-' + card_slot).attr('src', '/media_files/' + random_card_object.image);
-    //   // add json object to card slot for card logic
-    //   $('#hand-slot-' + card_slot).data('card-info', random_card_object);
-    // }
 
     // has to be turn_player_1 here becuase not passing in current turn player during initialization
-    $('#turn_player_1').addClass('success');
+    // force background if people joined after turn player joined the room
+    // $('#turn_player_1').addClass('success');
   } // end if action.initialize_deck
 
 
@@ -196,7 +207,8 @@ function draw_card(max_hand_size) {
     card_count++;
     hand_size++;
     let random_card_object = random_card();
-    $('#hand').append(
+    // $('#hand').append(
+    $('#random-cards-drawn').append(
       '<img class="card playable-from-hand" id="new-card-' + card_count + '" src="/media_files/' 
       + random_card_object.image + '" alt="">'
     );
@@ -232,19 +244,77 @@ function change_player() {
   draw_card(5);
 }
 
+function ready_character_selection() {
+  $("#game-room-ready-btn").hide();
+  $("#game-room-cancel-btn").show();
+
+  $('.start-class').off('click').off('mouseenter').off('mouseleave');
+
+  //probaly need to add a waiting room table
+  let data = {
+    'picked-starter-class': current_start_class
+  }
+  socket.send(JSON.stringify(data));
+}
+
+function cancel_character_selection() {
+  $("#game-room-cancel-btn").hide();
+  $("#game-room-ready-btn").show();
+
+  $('.start-class').on('click', select_class);
+
+}
+
+function select_class() {
+  $('.start-class').removeClass('border-blue');
+  $('.start-class').on('mouseenter', function () {
+    $(this).addClass('border-green');
+  });
+
+  $('.start-class').on('mouseleave', function () {
+    $(this).removeClass('border-green');
+  });
+
+  $(this).off('mouseout').off('mouseenter');
+  $(this).addClass('border-blue');
+  current_start_class = $(this).attr('id');
+}
+
 // document.ready shorthand
 $(() => {
-  $('.start-class').on('click', (picked) => {
-    let data = {
-      'picked-starter-class': picked.target.id
-    }
-    socket.send(JSON.stringify(data));
+  $('.start-class').on('click', select_class);
+    // function (picked) {
+    // $('.start-class').removeClass('border-blue');
 
-    $("#board").show();
-    $("#stats").show();
-    $("#current-hero").show();
-    $("#pick-class").hide();
-  });
+    // $(document.body).on('mouseenter', '.start-class', function () {
+    //   $(this).addClass('border-green');
+    // });
+
+    // $(document.body).on('mouseleave', '.start-class', function () {
+    //   $(this).removeClass('border-green');
+    // });
+
+    // // console.log(picked.target);
+    // // console.log(this);
+    // $(this).off('mouseout').off('mouseenter');
+    // $(this).addClass('border-blue');
+    // current_start_class = picked.target.id;
+    // console.log(current_start_class);
+
+
+
+
+
+    // move this to main loop
+    // $("#board").show();
+    // $("#stats").show();
+    // $("#current-hero").show();
+    // $("#game-title-outside-container").show();
+    // $("#pick-class").hide();
+    // $("#pick-class-header").hide();
+    // $("#user-waiting-div").hide();
+    // $("#game-room-user-ready").hide();
+  // });
 
 $('.movable-card').draggable({
     containment: 'window',
@@ -260,7 +330,7 @@ $('.movable-card').draggable({
 
   function allowedTarget(target) {
     // need to check if target tile is the same as current or won't revert
-    target_tile = "#" + $(this).attr('id');
+    target_tile = '#' + $(this).attr('id');
     target_tile_src = $(this).attr('src').length;
  
     if ((current_player == turn_player || target_tile == current_tile) && target_tile_src < 1) {
@@ -291,16 +361,21 @@ $('.movable-card').draggable({
   **  
   */
 
-  // playable from hand targets ability, ultimate, and 5 randomly generated cards
+  // playable from hand targets: ability, ultimate, and 5 randomly generated cards
   // can't use anon function for 'this'
   $(document.body).on('click', '.playable-from-hand', function () {
     if (current_player === turn_player) { // only allow actions for turn player
       card = $(this).data('card-info'); // card obj attached to html
       // console.log(card);
 
+
+  /*  
+  ** ARCHER CARDS
+  */
+      // archer ability
       if (card.name === 'Take Aim' && !($(this).hasClass('active-card'))) {
         $(this).addClass('active-card'); // prevents abilities from being played more than once per turn
-        let take_aim_value = 1;
+        let take_aim_value = 1 + take_aim_augments;
         let update_player_stats = {
           'alter_player_stats': {
             'target': current_player,
@@ -311,7 +386,22 @@ $('.movable-card').draggable({
         };
         socket.send(JSON.stringify(update_player_stats));
       }
-      else if (card.name == 'Shortbow') {
+      // archer ultimate
+      else if (card.name === 'Snipe') {
+        let current_player_range = $('#' + current_player + '-attack_range').html();
+        let snipe_value = 2 * parseInt(current_player_range);
+        let update_player_stats = {
+          'alter_player_stats': {
+            'target': current_player,
+            'stat_to_modify': 'attack_damage',
+            'stat_to_modify_amount': snipe_value,
+            'until_end_of_turn': true
+          }
+        };
+        socket.send(JSON.stringify(update_player_stats));
+        $(this).hide();
+      }
+      else if (card.name === 'Shortbow') {
         let shortbow_value = 2;
         let update_player_stats = {
           'alter_player_stats': {
@@ -322,10 +412,10 @@ $('.movable-card').draggable({
         };
         socket.send(JSON.stringify(update_player_stats));
         $('#current-player-buffs').append(
-          '<img class="card" src="/media_files/'+ card.image +'" alt="' + card.image + '">'
+          '<img class="card player-buffs" src="/media_files/'+ card.image +'" alt="' + card.name + '">'
         );
       }
-      else if (card.name == 'Longbow') {
+      else if (card.name === 'Longbow') {
         let longbow_value = 1;
         let update_player_stats = {
           'alter_player_stats': {
@@ -336,7 +426,13 @@ $('.movable-card').draggable({
         };
         socket.send(JSON.stringify(update_player_stats));
         $('#current-player-buffs').append(
-          '<img class="card" src="/media_files/'+ card.image +'" alt="' + card.image + '">'
+          '<img class="card player-buffs" src="/media_files/'+ card.image +'" alt="' + card.name + '">'
+        );
+      }
+      else if (card.name === 'Load Up') {
+        take_aim_augments += 1;
+        $('#current-player-buffs').append(
+          '<img class="card player-buffs" src="/media_files/'+ card.image +'" alt="' + card.name + '">'
         );
       }
 

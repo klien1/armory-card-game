@@ -49,6 +49,12 @@ class Game_instance(models.Model):
     })
   number_of_players = models.PositiveIntegerField(default=0)
   max_number_of_players = models.PositiveIntegerField(default=2)
+  GAME_STATES = (
+      ('In Progress', 'In Progress'),
+      ('Waiting', 'Waiting'),
+      ('Completed', 'Completed'),
+  )
+  game_state = models.CharField(max_length=20, choices=GAME_STATES, default='Waiting')
 
   def __str__(self):
     return self.room_name

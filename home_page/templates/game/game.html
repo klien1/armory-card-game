@@ -116,21 +116,47 @@
       <img class="card pull-left playable-from-hand" id="ability-slot" src="" alt="">
       <img class="card pull-left playable-from-hand" id="ultimate-slot" src="" alt="">
       <div class="empty" id="empty-hand-placeholder"></div>
-<!--       <img class="card playable-from-hand" id="hand-slot-1" src="" alt="">
-      <img class="card playable-from-hand" id="hand-slot-2" src="" alt="">
-      <img class="card playable-from-hand" id="hand-slot-3" src="" alt="">
-      <img class="card playable-from-hand" id="hand-slot-4" src="" alt="">
-      <img class="card playable-from-hand" id="hand-slot-5" src="" alt=""> -->
+      <div id="random-cards-drawn"></div>
     </div>
   </div>  
 </div>
 
-<div class="col-md-3 pull-right">
+
+<div class="container" id="pick-class-header">
+  <div id="user-waiting-div" class="container col-md-6 text-center">
+    <div id="user-waiting">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Class Chosen</th>
+            <th>Ready</th>
+          </tr>
+        </thead>
+        <tbody id="user-waiting-body"></tbody>
+      </table>
+    </div>  
+  </div>
+
+  <div class="col-md-3 pull-right">
+    {% for name in room %}
+      <h3><strong>Room name: {{name}}</strong></h3>
+    {% endfor %}
+      <h3><strong>User: {{current_user}}</strong></h3>
+    <button class="btn btn-danger" onclick="exit_game()">
+      Exit Game Room
+    </button>
+  </div>
+
+</div>
+
+<!-- causes errors when displaying with div container so need to make 2nd one -->
+<div id="game-title-outside-container" class="col-md-3 pull-right">
   {% for name in room %}
     <h3><strong>Room name: {{name}}</strong></h3>
   {% endfor %}
-    <h3><strong id="user-in-game">User: {{current_user}}</strong></h3>
-  <button class="btn btn-danger" id="exit-game-room" onclick="exit_game()">
+    <h3><strong>User: {{current_user}}</strong></h3>
+  <button class="btn btn-danger" onclick="exit_game()">
     Exit Game Room
   </button>
 </div>
@@ -146,6 +172,24 @@
     {% endfor %}
   </div>
 </div>
+<div id="game-room-user-ready" class="text-center container">
+    <button id="game-room-ready-btn" onclick="ready_character_selection()" class="btn btn-info">
+      READY
+    </button>
+    <button id="game-room-cancel-btn" onclick="cancel_character_selection()" class="btn btn-warning">
+      CANCEL
+    </button>
+</div>
+<!-- 
+  add button here for ready
+  which disable onclick hero selection
+  add window to display users in room
+  add background when user is ready to play the game
+  update game status to inprogress
+  update lobby status to game to inprogress
+  after all users are ready, 
+  having waiting for other players  
+ -->
 <img class="card pull-left movable-card" id="current-hero" src="" alt="">
 <img class="pull-left" id='supersize' src='' alt='superimage'>
 {% endblock body %}

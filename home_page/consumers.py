@@ -249,8 +249,6 @@ def ws_message_game(message, room_id):
     boss_image_url = Card.objects.get(card_type='Boss', name='Skeleton King').image.url
     current_player = Game_player.objects.get(username=message.user.username, game_instance_id=game_room)
 
-    # need to update current position of players in the game when joining in the middle
-    # filter game_instance_id=game_room . exclue false, if something exists then there is a turn player
     turn_player = Game_player.objects.get(game_instance_id=game_room, turn_player=True)
 
     Group("game-{0}-{1}".format(room_id, message.user.username)).send({
@@ -266,7 +264,9 @@ def ws_message_game(message, room_id):
           "username": turn_player.username,
           "player_number": str(turn_player.player_number),
           "prev_player_number": 1
-        }
+        },
+        #test remove after
+        # "all_players_ready": True
       })
     })
 
