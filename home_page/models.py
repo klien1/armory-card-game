@@ -48,6 +48,7 @@ class Game_instance(models.Model):
       'unique': 'Room name already exists.'
     })
   number_of_players = models.PositiveIntegerField(default=0)
+  number_of_players_ready = models.PositiveIntegerField(default=0)
   max_number_of_players = models.PositiveIntegerField(default=2)
   GAME_STATES = (
       ('In Progress', 'In Progress'),
@@ -72,6 +73,7 @@ class Game_player(models.Model):
 
   turn_player = models.BooleanField(default=False)
   board_position = models.CharField(max_length=10, default='none')
+  player_ready = models.BooleanField(default=False)
 
 
   def __str__(self):

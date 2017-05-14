@@ -58,10 +58,30 @@ socket.onmessage = (msg) => {
     game_room_list = []; // need this to keep track of duplicates for invite
     game_list.forEach((room) => {
         game_room_list.push(room.fields.room_name);
-        if (room.fields.number_of_players >= room.fields.max_number_of_players) {
+        if (room.fields.game_state == "In Progress") {
+          $("#game_list").append("<li class='list-group-item'>" + 
+            room.fields.room_name +
+            "<span class='badge badge-info'>Game in Progress</span>" +
+            "<a class='badge badge-default badge-pill' data-placement='left'" + 
+            " data-toggle='tooltip' title='players in current game / max slots'>" + 
+            room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
+            "</a>"
+          );
+        }
+        else if (room.fields.game_state == "Completed") {
+           $("#game_list").append("<li class='list-group-item'>" + 
+            room.fields.room_name +
+            "<span class='badge badge-success'>Game Completed</span>" +
+            "<a class='badge badge-default badge-pill' data-placement='left'" + 
+            " data-toggle='tooltip' title='players in current game / max slots'>" + 
+            room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
+            "</a>"
+          );         
+        }
+        else if (room.fields.number_of_players >= room.fields.max_number_of_players) {
           $("#game_list").append("<li class='list-group-item'>" + 
             room.fields.room_name + 
-            "<a class='badge badge-default badge-pill' data-placement='left'" + 
+            "<a class='badge badge-warning badge-pill' data-placement='left'" + 
             " data-toggle='tooltip' title='players in current game / max slots'>" + 
             room.fields.number_of_players + "/" + room.fields.max_number_of_players + 
             "</a>"
@@ -70,7 +90,8 @@ socket.onmessage = (msg) => {
         else {   
           $("#game_list").append("<li class='list-group-item'>" + 
             room.fields.room_name + 
-            "<a class='badge badge-default badge-pill'" + 
+            // "<a class='badge badge-default badge-pill red'" + 
+            "<a class='badge badge-inverse'" + 
             "onclick='check_room(\"" + room.fields.room_name + "\")'>Join Game</a>" + 
             "<a class='badge badge-default badge-pill' data-placement='left'" + 
             " data-toggle='tooltip' title='players in current game / max slots'>" + 

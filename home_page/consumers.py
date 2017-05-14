@@ -212,6 +212,16 @@ def ws_message_game(message, room_id):
   # declare game_room here because action are specific to game room
   game_room = Game_instance.objects.get(id=room_id)
 
+  if action.get('not-ready-signal') is not None:
+    user = Game_player.objects.get(game_instance_id=game_room, username=message.user.username)
+    user.player_ready = False
+    user.save()
+
+  if action.get('ready-signal') is not None:
+    user = Game_player.objects.get(game_instance_id=game_room, username=message.user.username)
+    user.player_ready = True
+    user.save()
+
 
   if action.get('refresh_stats') is not None:
     player_stats = serializers.serialize(
@@ -241,9 +251,6 @@ def ws_message_game(message, room_id):
       attack_range=hero_object.attack_range
     )
 
-    player_stats = serializers.serialize(
-      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
-    )
     # Currently only have 1 boss, so boss never changes
     boss_stats = serializers.serialize("json", Hero.objects.filter(hero_class='Skeleton King'))
     boss_image_url = Card.objects.get(card_type='Boss', name='Skeleton King').image.url
@@ -265,16 +272,38 @@ def ws_message_game(message, room_id):
           "player_number": str(turn_player.player_number),
           "prev_player_number": 1
         },
-        #test remove after
-        # "all_players_ready": True
       })
     })
 
-    Group("game-%s" % room_id).send({
-      "text": json.dumps({
-        "player_stats": player_stats
+    num_players_ready = Game_player.objects.filter(game_instance_id=game_room, player_ready=True).count()
+    if num_players_ready == game_room.max_number_of_players:
+      player_stats = serializers.serialize(
+        "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+      )
+
+      game_room.game_state = 'In Progress';
+      game_room.save();
+      room_list = serializers.serialize("json", Game_instance.objects.all())
+      Group("lobby").send({
+        "text": json.dumps({
+          "game_rooms": room_list,
+        })
       })
-    })
+
+      Group("game-%s" % room_id).send({
+        "text": json.dumps({
+          "player_stats": player_stats,
+          "all_players_ready": True,
+        })
+      })
+
+    '''
+    if number of players ready = max_players_in room
+      start game
+      send board state to all players
+      problem player is ready before other player joins
+      loop send all players where position is not null
+    '''
 
   if action.get('update_board') is not None:
     update_board = action.get('update_board')

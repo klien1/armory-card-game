@@ -39,6 +39,34 @@ socket.onmessage = (msg) => {
     $("#pick-class-header").hide();
     $("#user-waiting-div").hide();
     $("#game-room-user-ready").hide();
+
+    let start_position;
+    if (current_player_number === 1) {
+      // bottom left
+      start_position = $('#tile-60').offset();
+      current_tile = "#tile-60";
+    }
+    else if (current_player_number === 2) {
+      // bottom right
+      start_position = $('#tile-00').offset();
+      current_tile = "#tile-00";
+    }
+    else if (current_player_number === 3) {
+      // top left
+      start_position = $('#tile-04').offset();
+      current_tile = "#tile-04";
+    }
+    else {
+      // top right
+      start_position = $('#tile-64').offset();
+      current_tile = "#tile-64";
+    }
+    $('#current-hero').css({
+      top: start_position.top, 
+      left: start_position.left,
+      border: '2px solid green'
+    });
+    update_board(current_tile);
   }
 
 
@@ -49,33 +77,7 @@ socket.onmessage = (msg) => {
       for (let i = 0; i < card.fields.copies; i++) {
         if (card.fields.card_type === "Hero") { // needs to start on board change later
           current_hero = card.fields.name;
-          let start_position;
-          if (current_player_number === 1) {
-            // bottom left
-            start_position = $('#tile-60').offset();
-            current_tile = "#tile-60";
-            update_board('#tile-60');
-          }
-          else if (current_player_number === 2) {
-            // bottom right
-            start_position = $('#tile-00').offset();
-            current_tile = "#tile-00";
-            update_board('#tile-00');
-          }
-          // p3 and p4 not fully implemented
-          else if (current_player_number === 3) {
-            // top left
-            start_position = $('#tile-04').offset();
-          }
-          else {
-            // top right
-            start_position = $('#tile-64').offset();
-          }
-          $('#current-hero').css({
-            top: start_position.top, 
-            left: start_position.left,
-            border: '2px solid green'
-          });
+
           $('#current-hero').attr('src', '/media_files/' + card.fields.image);
           $('#current-hero').attr('alt', card.fields.name);
           $('#current-hero').attr('alt', card.fields.name);
@@ -251,18 +253,33 @@ function ready_character_selection() {
   $('.start-class').off('click').off('mouseenter').off('mouseleave');
 
   //probaly need to add a waiting room table
+  // need to send ready signal and increment ready num players in database
   let data = {
-    'picked-starter-class': current_start_class
-  }
+    'picked-starter-class': current_start_class,
+    'ready-signal': true
+  };
   socket.send(JSON.stringify(data));
 }
 
+// need to add unready signal
 function cancel_character_selection() {
   $("#game-room-cancel-btn").hide();
   $("#game-room-ready-btn").show();
 
+  $('.start-class').on('mouseenter', function () {
+    $(this).addClass('border-green');
+  });
+
+  $('.start-class').on('mouseleave', function () {
+    $(this).removeClass('border-green');
+  });
   $('.start-class').on('click', select_class);
 
+  let data = {
+    'picked-starter-class': current_start_class,
+    'not-ready-signal': true
+  };
+  socket.send(JSON.stringify(data));
 }
 
 function select_class() {
