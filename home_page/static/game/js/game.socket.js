@@ -7,9 +7,15 @@ let current_player;
 let current_hero;
 let turn_player;
 let current_tile;
+let current_tile_number;
+let top_tile;
+let bottom_tile;
+let left_tile;
+let right_tile;
 let hand_size = 0;
 let card_count = 0;
 let take_aim_augments = 0;
+let max_movement = 1;
 
 let socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
 
@@ -45,27 +51,32 @@ socket.onmessage = (msg) => {
       // bottom left
       start_position = $('#tile-60').offset();
       current_tile = "#tile-60";
+      current_tile_number = "60";
     }
     else if (current_player_number === 2) {
       // bottom right
       start_position = $('#tile-00').offset();
       current_tile = "#tile-00";
+      current_tile_number = "00";
     }
     else if (current_player_number === 3) {
       // top left
       start_position = $('#tile-04').offset();
       current_tile = "#tile-04";
+      current_tile_number = "04";
     }
     else {
       // top right
       start_position = $('#tile-64').offset();
       current_tile = "#tile-64";
+      current_tile_number = "64";
     }
     $('#current-hero').css({
       top: start_position.top, 
       left: start_position.left,
       border: '2px solid green'
     });
+    calculate_adjacent_tiles(current_tile_number);
     update_board(current_tile);
   }
 
@@ -263,6 +274,7 @@ function change_player() {
   }
   socket.send(JSON.stringify(data));
   draw_card(5);
+  max_movement = 1;
 }
 
 function ready_character_selection() {
@@ -320,6 +332,33 @@ function select_class() {
   socket.send(JSON.stringify(data));
 }
 
+// cur_tile_num paramter is a string of 2 digit numbers
+function calculate_adjacent_tiles(cur_tile_num) {
+
+  let top = (parseInt(cur_tile_num) + 1).toString();
+  if (top.length < 2) {
+    top = "0" + top;
+  }
+  let bottom = (parseInt(cur_tile_num) - 1).toString();
+  if (bottom.length < 2) {
+    bottom = "0" + bottom;
+  }
+  let left = (parseInt(cur_tile_num) - 10).toString();
+  if (left.length < 2) {
+    left = "0" + left;
+  }
+  let right = (parseInt(cur_tile_num) + 10).toString();
+  if (right.length < 2) {
+    right = "0" + right;
+  }
+
+  top_tile = "#tile-" + top;
+  bottom_tile = "#tile-" + bottom;
+  left_tile = "#tile-" + left;
+  right_tile = "#tile-" + right;
+
+}
+
 // document.ready shorthand
 $(() => {
 
@@ -342,7 +381,14 @@ $('.movable-card').draggable({
     target_tile = '#' + $(this).attr('id');
     target_tile_src = $(this).attr('src').length;
  
-    if ((current_player == turn_player || target_tile == current_tile) && target_tile_src < 1) {
+    // have to separate current tile from other logic or revert won't work
+    if (current_player == turn_player && target_tile_src < 1 && max_movement > 0 &&
+        (target_tile == top_tile || target_tile == bottom_tile || 
+        target_tile == left_tile || target_tile == right_tile
+      )) {
+      return true;
+    }
+    else if (target_tile == current_tile) {
       return true;
     }
     return false;
@@ -350,7 +396,16 @@ $('.movable-card').draggable({
 
   function onTarget(event, ui) {
     // console.log($(this).attr('id')); // gets id of droppable
-    update_board("#"+$(this).attr('id'));
+
+    // need to check to prevent unessessary updates if dropped on same zone
+    if (current_tile !== "#"+$(this).attr('id')) {
+      current_tile = "#"+$(this).attr('id');
+      current_tile_number = current_tile.substr(current_tile.lastIndexOf("-") + 1);
+      calculate_adjacent_tiles(current_tile_number);
+      max_movement--;
+      update_board(current_tile);
+    }
+
     ui.draggable.position({ 
       of: $(this), // current successful droppable
       my: 'left top', 
