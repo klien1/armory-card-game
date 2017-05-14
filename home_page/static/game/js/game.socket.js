@@ -266,16 +266,18 @@ function change_player() {
 }
 
 function ready_character_selection() {
-  $("#game-room-ready-btn").hide();
-  $("#game-room-cancel-btn").show();
+  if (current_start_class !== undefined) {  
+    $("#game-room-ready-btn").hide();
+    $("#game-room-cancel-btn").show();
 
-  $('.start-class').off('click').off('mouseenter').off('mouseleave');
+    $('.start-class').off('click').off('mouseenter').off('mouseleave');
 
-  let data = {
-    'picked-starter-class': current_start_class,
-    'ready-signal': current_start_class
-  };
-  socket.send(JSON.stringify(data));
+    let data = {
+      'picked-starter-class': current_start_class,
+      'ready-signal': current_start_class
+    };
+    socket.send(JSON.stringify(data));
+  }
 }
 
 // need to add unready signal
