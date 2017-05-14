@@ -10,10 +10,33 @@
 {% endblock head %}
 
 {% block body %}
-<!--   <div class="container">
+  <div class="container" id="header">
+    <h1>Objective</h1>
+    <ul>
+      <li>Team up with allies to defeat the boss.</li>
+      <li>Win by reducing the boss's health to zero!</li>
+    </ul>
     <h1>How to play</h1>
-  </div> -->
-    <img src="{% static "cards/Rules.jpg" %}" alt="guide">
+    <ul>
+      <li>At the beginning of the game you can choose a class to play.</li>
+      <li>Once two players are ready, the game will start.</li>
+      <li>Once the game starts you can perform a number of actions on your turn.</li>
+      <ul>
+        <li>Move your character one space.</li>
+        <li>Play cards from your hand.</li>
+      </ul>
+    </ul>
+  </div>
+  <div class="container" id="card-images">
+    <h1>Explanation for each card type</h1>
+    <img src="{% static "cards/hero_card.jpg" %}" alt="guide" style="width: 70%">
+    <img src="{% static "cards/ability_card.jpg" %}" alt="guide" style="width: 70%">
+    <img src="{% static "cards/ultimate.jpg" %}" alt="guide" style="width: 70%">
+    <img src="{% static "cards/equip.jpg" %}" alt="guide" style="width: 70%">
+    <img src="{% static "cards/reaction.jpg" %}" alt="guide" style="width: 70%">
+    <img src="{% static "cards/augment_card.jpg" %}" alt="guide" style="width: 100%">
+    <img src="{% static "cards/skill_card.jpg" %}" alt="guide" style="width: 70%">
+  </div>
 {% endblock body %}
 
 {% block scripts %}
