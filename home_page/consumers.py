@@ -336,13 +336,6 @@ def ws_message_game(message, room_id):
         })
       })
 
-    '''
-    if number of players ready = max_players_in room
-      start game
-      send board state to all players
-      problem player is ready before other player joins
-      loop send all players where position is not null
-    '''
 
   if action.get('update_board') is not None:
     update_board = action.get('update_board')
@@ -408,53 +401,6 @@ def ws_message_game(message, room_id):
   '''
     card logic begins
   '''
-  if action.get('update_player_stats') is not None:
-    update_obj = action.get('update_player_stats')
-    '''
-      update_player_stats parameters
-        'target': username
-        'health': #
-        'armor': #
-        'attack_damage': #
-        'attack_range': #
-        'until_end_of_turn': bool,
-        'modification': 'add', 'sub', 'other', 'etc'
-    '''
-    modify_player = Game_player.objects.get(game_instance_id=game_room, username=update_obj['target'])
-    if update_obj.get('modification') == 'add':
-      if update_obj.get('health') is not None:
-        pass
-      if update_obj.get('armor') is not None:
-        pass
-      if update_obj.get('attack_damage') is not None:
-        modify_player.attack_damage += update_obj['attack_damage']
-        # modify_player.attack_damage = update_obj['attack_damage']
-        # modify_stats.update(attack_damage=update_obj['attack_damage'])
-        pass
-      if update_obj.get('attack_range') is not None:
-        pass
-      # modify_player.update(=update_obj['stat_number'])
-    # if action.get('until_end_of_turn') is not None:
-    # print(modify_player.attack_damage)
-    # modify_player.save()
-    # print(modify_player.attack_damage)
-    player_stats = serializers.serialize(
-      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
-    )
-
-    print(Game_player.objects.filter(game_instance_id=game_room).order_by('player_number').first().attack_damage)
-    modify_player.save()
-    Group("game-%s" % room_id).send({
-      "text": json.dumps({
-        "player_stats": player_stats
-      })
-    })
-    # get current user from current game room
-    # modify stats
-    # send back as broadcast
-
-
-  # redoing altering stats
 
   '''
   obj needs
@@ -494,7 +440,7 @@ def ws_message_game(message, room_id):
           'stat_to_modify_amount': alter_obj['stat_to_modify_amount'],
         }
       })
-    })    
+    })
 
 
 @channel_session_user

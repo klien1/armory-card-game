@@ -62,11 +62,7 @@ img {
 
 .empty {
   display: inline-block;
-  /*margin-left: 2em;*/
   float: left;
-  /*width: 98px;*/
-  /*height: 138px;*/
-  /*width: 80px;*/
   width: 30px;
   height: 111px;
   border: 1px solid white;
@@ -75,8 +71,6 @@ img {
 #supersize {
   width: 20%; 
   height: 20%; 
-  /*width: 15%;*/
-  /*height: 15%;*/
   float:right; 
   margin-top:2em; 
   margin-right:1em;
@@ -117,6 +111,5 @@ img {
 }
 
 #game-room-cancel-btn, #game-title-outside-container {
-  /*visibility: hidden;*/
   display: none;
 }

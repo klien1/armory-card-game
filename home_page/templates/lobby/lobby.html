@@ -6,7 +6,6 @@
 {% endblock title %}
 
 {% block head %}
-<!-- <link rel="alternate" href="{% static "bootstrap-3.3.7-dist/css/bootstrap-theme.min.css" %}"> -->
     <link rel="stylesheet" type="text/css" href="{% static "lobby/css/lobby.css" %}">
 {% endblock head %}
 
@@ -59,10 +58,6 @@
           </form>
         </div>
         <div id="invite-game-room"></div>
-<!--         <div>
-          <h2>Users in Lobby</h2>
-          <ul id="user_list" class="list-group"></ul>
-        </div> -->
         <div>
           <h2>Active Game Rooms</h2>
           <ul id="game_list" class="list-group"></ul>
@@ -75,10 +70,6 @@
         <input id="message" type="text" placeholder="enter message">
         <button type="submit" onclick="send_message()" class="btn btn-primary">Send</button>
       </div>
-<!--       <div id="friend-component pull-right" class="col-md-3">
-        <h2>Friends list</h2> 
-        <div id="friend_list"></div>
-      </div> -->
       <div class="col-md-3">
         <h2>Users in Lobby</h2>
         <ul id="user_list" class="list-group"></ul>
@@ -95,8 +86,6 @@
 {% endblock body %}
 
 {% block scripts %}
-  <!-- <script src="{% static "greensock-js/src/minified/TweenMax.min.js" %}"></script> -->
-  <!-- <script src="{% static "greensock-js/src/minified/utils/Draggable.min.js" %}"></script> -->
   <script src="{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static "lobby/js/lobby.js" %}" type="text/javascript" charset="utf-8"></script>
 {% endblock scripts %}

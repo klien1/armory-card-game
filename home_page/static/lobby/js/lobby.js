@@ -135,15 +135,6 @@ socket.onmessage = (msg) => {
   }
 }
 
-// socket is open
-// socket.onopen = () => {
-//   console.log('CONNECTED');
-// }
-
-// if (socket.readyState == WebSocket.OPEN) {
-//   socket.onopen();
-// }
-
 // send message to server
 function send_message() {
   let message = document.getElementById('message');
