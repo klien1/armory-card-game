@@ -103,9 +103,6 @@ socket.onmessage = (msg) => {
     $("#random-cards-drawn").empty();
     draw_card(5);
 
-    // has to be turn_player_1 here becuase not passing in current turn player during initialization
-    // force background if people joined after turn player joined the room
-    // $('#turn_player_1').addClass('success');
   } // end if action.initialize_deck
 
 
@@ -127,7 +124,6 @@ socket.onmessage = (msg) => {
         $('#turn_player_' + player.fields.player_number).addClass('success');
       }
     });
-    // $('#turn_player_1').addClass('success');
   } // end if action.player_stats
 
   if (action.boss_stats !== undefined) {
@@ -181,9 +177,33 @@ socket.onmessage = (msg) => {
   }
 
   if (action.alter_player_stats !== undefined) {
-    // console.log(action.alter_player_stats);
     stat = $('#' + action.alter_player_stats.target + '-' + action.alter_player_stats.stat_to_modify);
     stat.html(parseInt(stat.html()) + action.alter_player_stats.stat_to_modify_amount);
+  }
+
+  if (action.player_waiting_room_status !== undefined) {
+    let waiting_players = JSON.parse(action.player_waiting_room_status);
+    $("#user-waiting-body").empty();
+    waiting_players.forEach((player) => {
+      if (player.fields.hero_class === undefined || player.fields.hero_class === null) {
+        $("#user-waiting-body").append(
+          "<tr>" +
+            "<td>" + player.fields.username + "</td>" +
+            "<td></td>" +
+            "<td>" + player.fields.player_ready + "</td>" +
+          "</tr>"
+        );
+      }
+      else {        
+        $("#user-waiting-body").append(
+          "<tr>" +
+            "<td>" + player.fields.username + "</td>" +
+            "<td>" + player.fields.hero_class + "</td>" +
+            "<td>" + player.fields.player_ready + "</td>" +
+          "</tr>"
+        );
+      }
+    });
   }
 
 }
@@ -209,7 +229,6 @@ function draw_card(max_hand_size) {
     card_count++;
     hand_size++;
     let random_card_object = random_card();
-    // $('#hand').append(
     $('#random-cards-drawn').append(
       '<img class="card playable-from-hand" id="new-card-' + card_count + '" src="/media_files/' 
       + random_card_object.image + '" alt="">'
@@ -252,11 +271,9 @@ function ready_character_selection() {
 
   $('.start-class').off('click').off('mouseenter').off('mouseleave');
 
-  //probaly need to add a waiting room table
-  // need to send ready signal and increment ready num players in database
   let data = {
     'picked-starter-class': current_start_class,
-    'ready-signal': true
+    'ready-signal': current_start_class
   };
   socket.send(JSON.stringify(data));
 }
@@ -276,8 +293,7 @@ function cancel_character_selection() {
   $('.start-class').on('click', select_class);
 
   let data = {
-    'picked-starter-class': current_start_class,
-    'not-ready-signal': true
+    'not-ready-signal': current_start_class
   };
   socket.send(JSON.stringify(data));
 }
@@ -295,43 +311,17 @@ function select_class() {
   $(this).off('mouseout').off('mouseenter');
   $(this).addClass('border-blue');
   current_start_class = $(this).attr('id');
+
+  let data = {
+    'update-player-selection': current_start_class
+  };
+  socket.send(JSON.stringify(data));
 }
 
 // document.ready shorthand
 $(() => {
-  $('.start-class').on('click', select_class);
-    // function (picked) {
-    // $('.start-class').removeClass('border-blue');
 
-    // $(document.body).on('mouseenter', '.start-class', function () {
-    //   $(this).addClass('border-green');
-    // });
-
-    // $(document.body).on('mouseleave', '.start-class', function () {
-    //   $(this).removeClass('border-green');
-    // });
-
-    // // console.log(picked.target);
-    // // console.log(this);
-    // $(this).off('mouseout').off('mouseenter');
-    // $(this).addClass('border-blue');
-    // current_start_class = picked.target.id;
-    // console.log(current_start_class);
-
-
-
-
-
-    // move this to main loop
-    // $("#board").show();
-    // $("#stats").show();
-    // $("#current-hero").show();
-    // $("#game-title-outside-container").show();
-    // $("#pick-class").hide();
-    // $("#pick-class-header").hide();
-    // $("#user-waiting-div").hide();
-    // $("#game-room-user-ready").hide();
-  // });
+$('.start-class').on('click', select_class);
 
 $('.movable-card').draggable({
     containment: 'window',

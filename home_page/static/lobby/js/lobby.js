@@ -26,6 +26,7 @@ socket.onmessage = (msg) => {
     current_username = recv.initialize_username;
   }
 
+  // can only handle 1 invite at a time
   if (recv.invite !== undefined) {
     $("#invite-game-room").empty();
     $("#create-game-room").hide();
@@ -89,8 +90,7 @@ socket.onmessage = (msg) => {
         }
         else {   
           $("#game_list").append("<li class='list-group-item'>" + 
-            room.fields.room_name + 
-            // "<a class='badge badge-default badge-pill red'" + 
+            room.fields.room_name +  
             "<a class='badge badge-inverse'" + 
             "onclick='check_room(\"" + room.fields.room_name + "\")'>Join Game</a>" + 
             "<a class='badge badge-default badge-pill' data-placement='left'" + 

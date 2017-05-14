@@ -203,7 +203,14 @@ def ws_connect_game(message, room_id):
       "game_rooms": room_list,
     })
   })
-
+  player_waiting_room_status = serializers.serialize(
+    "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+  )    
+  Group("game-%s" % room_id).send({
+    "text": json.dumps({
+      "player_waiting_room_status": player_waiting_room_status
+    })
+  })
 
 @channel_session_user
 def ws_message_game(message, room_id):
@@ -212,15 +219,47 @@ def ws_message_game(message, room_id):
   # declare game_room here because action are specific to game room
   game_room = Game_instance.objects.get(id=room_id)
 
+  if action.get('update-player-selection') is not None:
+    user = Game_player.objects.get(game_instance_id=game_room, username=message.user.username)
+    user.hero_class = action.get('update-player-selection')
+    user.save()
+    player_waiting_room_status = serializers.serialize(
+      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+    )    
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "player_waiting_room_status": player_waiting_room_status
+      })
+    })   
+
+
   if action.get('not-ready-signal') is not None:
     user = Game_player.objects.get(game_instance_id=game_room, username=message.user.username)
     user.player_ready = False
     user.save()
+    player_waiting_room_status = serializers.serialize(
+      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+    )    
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "player_waiting_room_status": player_waiting_room_status
+      })
+    })
+
 
   if action.get('ready-signal') is not None:
     user = Game_player.objects.get(game_instance_id=game_room, username=message.user.username)
     user.player_ready = True
+    user.hero_class = action.get('ready-signal')
     user.save()
+    player_waiting_room_status = serializers.serialize(
+      "json", Game_player.objects.filter(game_instance_id=game_room).order_by('player_number')
+    )    
+    Group("game-%s" % room_id).send({
+      "text": json.dumps({
+        "player_waiting_room_status": player_waiting_room_status
+      })
+    })
 
 
   if action.get('refresh_stats') is not None:
