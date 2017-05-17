@@ -52,3 +52,12 @@ password: starcraft
 - Moving your character
   - You can only move one space up, down, left, or right per turn. 
   - You cannot move diagonally.
+
+# issues
+- lobby
+  - Users that send an invite to the game cannot cancel the invite.
+  - A second invite to the same person will delete the invite from the first sender and the first sender cannot invite another player unless he or she refreshes the page.
+  - Users can send multiple invites by refreshing the page which will break the invite system.
+- game room
+  - refreshing the page in the middle of the game or during character selection causes problems.
+  
