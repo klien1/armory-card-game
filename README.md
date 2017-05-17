@@ -1,17 +1,15 @@
 # armory-card-game
 
 Available Accounts
-
+-----
 username: bryan (superuser)
 
 password: bobbobbob
-
-
+-----
 username: bill
 
 password: scienceguy
-
-
+-----
 username: star
 
 password: starcraft
