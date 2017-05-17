@@ -17,6 +17,12 @@ username: star
 password: starcraft
 
 -----
+username: mochi
+
+password: yummimochi
+
+-----
+
 *** Only a few cards have been implemented ***
 
 *** Only cards that change stats have been implemented ***
@@ -43,12 +49,14 @@ password: starcraft
   - The player with the green background is the current turn player.
   - The turn player's end turn button should be green.
   - If it is not your turn the end turn button should be blue.
-- Starting cards
+- Cards
   - Cards can only be played on your turn, with the exception of reaction cards.
   - Reaction cards can be played whenever you want.
-  - Players always start with an ability card and an ultimate card.
+  - Players always start with an ability card and an ultimate card (2 leftmost cards).
   - Ability cards can be played once per turn.
   - Ultimate cards can only be played once per game. Once you use the ultimate card the card disappears.
+  - Cards manipulate your player stats and the board (board manipulation not yet implemented).
+  - Once you play a card, it broadcasts changes to the player stats on the left for everyone in the room to see.
 - Moving your character
   - You can only move one space up, down, left, or right per turn. 
   - You cannot move diagonally.
