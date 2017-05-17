@@ -16,7 +16,7 @@ username: star
 
 password: starcraft
 
-
+-----
 *** Only a few cards have been implemented ***
 
 *** Only cards that change stats have been implemented ***
