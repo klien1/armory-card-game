@@ -26,7 +26,7 @@ password: starcraft
 *** Boss has not been implemented ***
 
 
-# card implemented
+# Cards Implemented
 - Archer cards
   - Take Aim (Archer Ability Card)
   - Snipe (Archer Ultimate Card)
@@ -34,7 +34,7 @@ password: starcraft
   - Longbow (Archer Equpment Card)
   - Loadup (Archer Augment Card)
 
-# how to interact with the game board
+# How to interact with the game
 - How to start the game
   - Create a game room and there needs to be at least two players ready in the room before the game starts.
   - You will be asked to choose a class. 
@@ -53,11 +53,18 @@ password: starcraft
   - You can only move one space up, down, left, or right per turn. 
   - You cannot move diagonally.
 
-# issues
+# Issues
+- overall
+  - Problems displaying the game with smaller devices.
+  - Currently designed to be play on desktops or laptops.
+  - On smaller devices the navbar blocks some of the data.
+  - Players logged into the same account with multiple browsers causes problems.
 - lobby
   - Users that send an invite to the game cannot cancel the invite.
   - A second invite to the same person will delete the invite from the first sender and the first sender cannot invite another player unless he or she refreshes the page.
   - Users can send multiple invites by refreshing the page which will break the invite system.
 - game room
-  - refreshing the page in the middle of the game or during character selection causes problems.
-  
+  - Refreshing the page in the middle of the game or during character selection causes problems.
+  - Resizing the game browser causes problems with the game.
+  - Need to recreate the game room if you resize the brower.
+  - The game board should be a 7x5 grid. If not you will have to zoom out the browser until it is a 7x5 grid and recreate the game.
