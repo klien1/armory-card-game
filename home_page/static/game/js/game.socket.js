@@ -428,10 +428,8 @@ $('.movable-card').draggable({
   // playable from hand targets: ability, ultimate, and 5 randomly generated cards
   // can't use anon function for 'this'
   $(document.body).on('click', '.playable-from-hand', function () {
+    card = $(this).data('card-info'); // card obj attached to html
     if (current_player === turn_player) { // only allow actions for turn player
-      card = $(this).data('card-info'); // card obj attached to html
-      // console.log(card);
-
 
   /*  
   ** ARCHER CARDS
@@ -500,11 +498,18 @@ $('.movable-card').draggable({
         );
       }
 
-      if (!(card.card_type === "Ability" || card.card_type === "Ultimate")) {      
+      if (!(card.card_type === "Ability" || card.card_type === "Ultimate" || card.card_type === "Reaction")) {      
         $(this).remove();
         hand_size--;
         current_player_discard.push(card);
       }
     } // end if current_player == turn_player
+
+    // reaction cards can be played when player isn't turn player
+    if (card.card_type === "Reaction") {
+      $(this).remove();
+      hand_size--;
+      current_player_discard.push(card);
+    }
   });
 });
