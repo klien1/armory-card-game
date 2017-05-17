@@ -1,13 +1,19 @@
 # armory-card-game
 
 Available Accounts
+
 username: bryan (superuser)
+
 password: bobbobbob
 
+
 username: bill
+
 password: scienceguy
 
+
 username: star
+
 password: starcraft
 
 
@@ -21,7 +27,7 @@ password: starcraft
 
 
 # card implemented
- - Archer cards
+- Archer cards
   - Take Aim (Archer Ability Card)
   - Snipe (Archer Ultimate Card)
   - Shortbow (Archer Equipment Card)
